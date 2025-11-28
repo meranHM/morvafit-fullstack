@@ -36,7 +36,7 @@ const cardData: BentoCardProps[] = [
     color: "#060010",
     title: "ModelFit",
     description: "My special workout plan",
-    image: "/services-ModelFit-noBg.png",
+    image: "/services-Modelfit-noBg.png",
   },
   {
     color: "#060010",
