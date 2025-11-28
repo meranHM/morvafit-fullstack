@@ -1,0 +1,12 @@
+{
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "Navbar": {
+    "home": "خانه",
+    "about": "درباره ما",
+    "shop": "فروشگاه",
+    "blog": "بلاگ",
+    "contact": "تماس با ما"
+  }
+}
