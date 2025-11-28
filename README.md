@@ -1,168 +1,172 @@
-MorvaFit – Full-Stack Fitness Coaching Platform
+# MorvaFit -- Full-Stack Fitness Coaching Platform 🏋️‍♂️🔥
 
-MorvaFit is a modern full-stack fitness coaching platform built for a personal trainer to manage clients, deliver personalized workout plans, and handle offline payments.
-The website includes a public portfolio-style single-page layout, user authentication, client dashboards, admin panel, and automated workout plan assignment based on user-submitted physical data.
+**MorvaFit** is a modern full-stack fitness coaching platform designed
+for personal trainers to manage clients, deliver personalized workout
+plans, and verify offline payments.\
+It includes a dynamic portfolio website, secure authentication, client
+dashboards, a powerful admin panel, and automated workout plan
+assignment based on user-submitted data.
 
-🚀 Tech Stack
-Frontend
+---
 
-Next.js 16 (App Router)
+## 🚀 Tech Stack
 
-TypeScript
+### **Frontend**
 
-TailwindCSS v4
+- **Next.js 16 (App Router)**
+- **TypeScript**
+- **TailwindCSS v4**
+- **Framer Motion** (UI animations)
+- **GSAP ScrollTrigger** (portfolio scroll animations)
+- **TanStack Query** (data fetching & caching)
+- **Zustand** (global/local UI state)
 
-Framer Motion (UI animations)
+### **Backend**
 
-GSAP ScrollTrigger (portfolio scroll animations)
+- **Next.js Full-Stack Route Handlers**
+- **Prisma ORM**
+- **PostgreSQL**
+- **NextAuth.js** (Credentials + optional OAuth)
+- **Cloudinary** (video + receipt storage)
+- **RBAC** (Role-Based Access Control)
 
-TanStack Query (server interaction & caching)
+---
 
-Zustand (local UI/global state)
+## 🧩 Core Features
 
-Backend
+### 🌐 Public Website
 
-Next.js Full-Stack Route Handlers
+A fast, animated single-page experience including: - Home\
 
-Prisma ORM
+- About\
+- Shop\
+- Blog\
+- Contact
 
-PostgreSQL
+With smooth scroll animations and cohesive branding.
 
-NextAuth.js (credentials, OAuth optional)
+---
 
-Cloudinary (receipt + video storage)
+### 🔐 Authentication & Roles
 
-Role-Based Access Control (RBAC)
+- Secure sign-in with **NextAuth.js**
+- Roles:
+  - **user**
+  - **admin**
+- Clients get private dashboard access upon signup.
 
-🧩 Core Features
-🌐 Public Website
+---
 
-A single-page portfolio-style layout with:
+### 👤 Client Dashboard
 
-Home
+Clients can: - Edit profile information\
 
-About
+- Submit a detailed health & body form (height, weight, goals, diet,
+  etc.)\
+- Upload offline payment receipts\
+- Receive personalized workout videos after admin approval\
+- View assigned plans anytime
 
-Shop
+---
 
-Blog
+### 🧾 Offline Payment Workflow
 
-Contact
+1.  Client uploads bank transfer receipt\
+2.  Admin reviews it\
+3.  Upon approval → workout videos automatically appear in the client
+    dashboard\
+4.  Client gets instant access
 
-Includes smooth animations, scroll effects, and a consistent branding experience.
+---
 
-🔐 Authentication
+### 📥 Admin Panel
 
-NextAuth.js with secure sessions
+A secure RBAC-protected panel built with **shadcn/ui**, featuring: -
+View all clients - Access health forms\
 
-User roles: user, admin
+- Approve receipts\
+- Assign workout plans/videos\
+- Upload videos directly to Cloudinary\
+- (Optional) manage blog/shop content
 
-Clients receive access to a personal dashboard after signup.
+---
 
-👤 User Dashboard
+### 📦 Storage
 
-After signing up, clients can:
+All media is stored using **Cloudinary**: - Offline payment receipts\
 
-Edit profile info
+- Training/workout videos
 
-Fill out a health & body information form (height, weight, diet, goals, etc.)
+---
 
-Upload payment receipts for manual verification
+## 📐 Project Structure
 
-Receive personalized workout videos after admin approval
+    /app
+      /(public-pages) → Home, About, Shop, Blog, Contact
+      /profile         → Client Dashboard (protected)
+      /admin           → Admin Panel (RBAC protected)
+      /api             → Auth, Users, Forms, Payments, Videos
 
-View assigned workout plans directly in their dashboard
+    /prisma
+      schema.prisma    → User, Profile, Form, Payment, WorkoutPlan models
 
-🧾 Offline Payment Workflow
+    /components
+      ui/              → shadcn/ui components
+      layout/          → Navbar, Footer, Animations
 
-User uploads a bank transfer receipt
+    /lib
+      auth/            → NextAuth config
+      validators/      → Zod validation
+      utils/           → Helpers + Cloudinary handlers
 
-Admin reviews it in the /admin dashboard
+---
 
-Once approved → client automatically receives their assigned training videos
+## 🛠️ Getting Started
 
-📥 Admin Panel
+### **1. Clone the Repository**
 
-A protected route (/admin) built using shadcn/ui with features for:
+\`\`\`bash git clone
+https://github.com/`<your-username>`{=html}/morvafit-fullstack-fitness-platform.git
+cd morvafit-fullstack-fitness-platform \`\`\`
 
-Viewing all clients & their forms
+### **2. Install Dependencies**
 
-Approving offline payments
+\`\`\`bash npm install \`\`\`
 
-Assigning workout/training videos to users
+### **3. Create Environment Variables**
 
-Uploading videos to Cloudinary
+Add a `.env` file with:
 
-Managing blog posts, shop items, and site content (optional future features)
+\`\`\` DATABASE_URL= NEXTAUTH_SECRET= NEXTAUTH_URL=
 
-📦 Storage
+CLOUDINARY_CLOUD_NAME= CLOUDINARY_API_KEY= CLOUDINARY_API_SECRET= \`\`\`
 
-Cloudinary is used for storing:
+### **4. Apply Prisma Migrations**
 
-Offline payment receipts
+\`\`\`bash npx prisma migrate dev \`\`\`
 
-Training videos
+### **5. Run Development Server**
 
-📐 Project Architecture
-/app
-/(public-pages) → Home, About, Shop, Blog, Contact
-/profile → User dashboard (protected)
-/admin → Admin panel (RBAC protected)
-/api → Full-stack API routes (Auth, Users, Forms, Payments, Videos)
+\`\`\`bash npm run dev \`\`\`
 
-/prisma
-schema.prisma → DB models (User, Profile, Form, Payment, WorkoutPlan)
+---
 
-/components
-ui/ → Reusable shadcn components
-layout/ → Navbar, Footer, Animations
+## 📌 Planned Features
 
-/lib
-auth/ → NextAuth config
-validators/ → Form validation (Zod)
-utils/ → Helpers, Cloudinary handlers
+- In-app chat (client ↔ coach)\
+- Automated nutrition recommendations\
+- Workout progress tracking\
+- AI-powered plan adjustments
 
-🛠️ Getting Started
+---
 
-1. Clone the Repository
-   git clone https://github.com/<your-username>/morvafit-fullstack-fitness-platform.git
-   cd morvafit-fullstack-fitness-platform
+## 📝 License
 
-2. Install Dependencies
-   npm install
+**MIT License** --- free to use, modify, and build upon.
 
-3. Environment Variables
+---
 
-Create a .env file:
+## 👤 Author
 
-DATABASE_URL=
-NEXTAUTH_SECRET=
-NEXTAUTH_URL=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-4. Apply Prisma Migrations
-   npx prisma migrate dev
-
-5. Run the App
-   npm run dev
-
-📌 Planned Features
-
-In-app chat between coach and client
-
-Automated nutrition suggestions
-
-Workout progress tracking
-
-AI-powered plan adjustment (future)
-
-📝 License
-
-MIT — Feel free to fork, modify, and build on this project.
-
-👤 Author
-
-Mehran Shahani – Full-Stack Developer
-If you want coaching or development help, feel free to reach out!
+**Mehran Shahani -- Full-Stack Developer**\
+If you need coaching or development assistance, feel free to reach out!
