@@ -1,6 +1,87 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "Hero": {
+    "title": "Strength. Balance. Confidence.",
+    "description": "Move with confidence and train with intention. Morvarid guides you through empowering workouts designed to build strength, mobility, and a beautifully balanced body. Your transformation starts here.",
+    "CTA": "Get in Touch"
+  },
+  "MottoSection": {
+    "brief": "Morvafit was built from years of hands-on coaching, movement training, and a passion for empowering women. From Pilates foundations to strength and mobility work, every program is designed to help you move better, feel stronger, and build lasting confidence.",
+    "miniTitle": "The Morvafit Method",
+    "reImaginedmethod": "Strength, Balance, Confidence — Reimagined for Women.",
+    "personalizedWorkouts": "Personalized workouts blending Pilates, strength training, and mobility—crafted to elevate your energy, posture, and confidence.",
+    "dreamBody": "Achieve the dream body",
+    "movementFocused": "Mindful Movement",
+    "movementFocusedDesc": "Every exercise is intentional—designed to improve alignment, enhance mobility, and activate deep strength for long-term results.",
+    "forEveryLevel": "For Every Level",
+    "forEveryLevelDesc": "Whether you're new to Pilates or experienced in fitness, each program adapts to your body, pace, and goals—no intimidation, only progress.",
+    "provenMethodology": "Proven Methodology",
+    "provenMethodologyDesc": "Pilates principles, strength training, dance-inspired conditioning, and mobility work come together for a balanced, sustainable transformation."
+  },
+  "ServicesSection": {
+    "title": "Use the most modern approaches and techniques",
+    "miniTitle": "Plans"
+  },
+  "UserForm": {
+    "title": "Your Fitness Assessment",
+    "description": "Help us create your personalized training plan",
+    "authGate": {
+      "title": "Start Your Fitness Journey",
+      "description": "Please sign in or create an account to access your personalize fitness assessment form.",
+      "CTA": "Sign In / Sign Up"
+    },
+    "successState": {
+      "title": "Assessment Complete!",
+      "description": "Your personalized fitness plan is being prepared..."
+    },
+    "form": {
+      "age": "Age",
+      "gender": "Gender",
+      "select": "Select",
+      "male": "Male",
+      "female": "Female",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "+1 (555) 123-4567",
+      "height": "Height (cm)",
+      "heightPlaceholder": "175",
+      "weight": "Weight (kg)",
+      "weightPlaceholder": "75",
+      "targetWeight": "Target Weight (kg)",
+      "targetWeightPlaceholder": "70",
+      "bmiTitle": "Your BMI Analysis",
+      "weightToLose": "Weight to lose",
+      "primaryGoalTitle": "Primary Fitness Goal",
+      "weightLoss": "Weight Loss",
+      "muscleGain": "Muscle Gain",
+      "endurance": "Endurance",
+      "generalFitness": "General Fitness",
+      "athleticPerformance": "Athletic Performance",
+      "flexibility": "Flexibility",
+      "currentActivityLevelTitle": "Current Activity Level",
+      "experienceLevelTitle": "Experience Level",
+      "preferredWorkoutDaysTitle": "Preferred Workout Days",
+      "preferredWorkoutTimeTitle": "Preferred Workout Time",
+      "sessionDurationTitle": "Session Duration",
+      "dietaryPreferenceTitle": "Dietary Preference",
+      "foodAllergiesTitle": "Food Allergies (Optional)",
+      "medicalConditionsTitle": "Medical Conditions",
+      "currentInjuriesTitle": "Current Injuries (Optional)",
+      "motivationTitle": "What Motivates You?",
+      "challengesTitle": "Biggest Challenges (Optional)",
+      "nextButton": "Next",
+      "backButton": "Back",
+      "submitting": "Submitting...",
+      "completeAssessment": "Complete Assessment",
+      "assessmentSummery": {
+        "title": "Assessment Summary",
+        "goal": "Goal",
+        "experience": "Experience",
+        "workoutDays": "Workout Days",
+        "sessionDuration": "Session Duration",
+        "diet": "Diet"
+      }
+    }
   },
   "Navbar": {
     "home": "Home",
@@ -8,5 +89,24 @@
     "shop": "Shop",
     "blog": "Blog",
     "contact": "Contact"
+  },
+  "Footer": {
+    "about": "About Us",
+    "services": "Services",
+    "testimonials": "Testimonials",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "help": "Help Center",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "description": "Transform your body and mind with personalized fitness coaching. Your journey to a healthier, stronger you starts here.",
+    "company": "Company",
+    "support": "Support",
+    "getInTouch": "Get in Touch",
+    "newsletter": "Subscribe to our newsletter",
+    "subscribe": "Subscribe"
   }
 }

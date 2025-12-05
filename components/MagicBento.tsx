@@ -33,34 +33,34 @@ const MOBILE_BREAKPOINT = 768
 
 const cardData: BentoCardProps[] = [
   {
-    color: "#060010",
+    color: "#f6eaea",
     title: "ModelFit",
     description: "My special workout plan",
     image: "/services-Modelfit-noBg.png",
   },
   {
-    color: "#060010",
+    color: "#f6eaea",
     title: "Personal",
     description: "Your personal plan",
     image: "/services-PersonalPlan-noBg.png",
   },
   {
-    color: "#060010",
+    color: "#f6eaea",
     title: "Fit and Fierce",
     description: "Stay fit in every part of your body",
-    image: "/services-FitFierce-noBg.png",
+    image: "/services-GluteGoals-noBg.png",
   },
   {
-    color: "#060010",
+    color: "#f6eaea",
     title: "Abs & Core Goals",
     description: "Home edition",
     image: "/services-AbsCore-noBg.png",
   },
   {
-    color: "#060010",
+    color: "#f6eaea",
     title: "Glute Goals",
     description: "Home Edition",
-    image: "/services-GluteGoals-noBg.png",
+    image: "/services-FitFierce-noBg.png",
   },
 ]
 
@@ -565,7 +565,7 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-intensity: 0;
             --glow-radius: 200px;
             --glow-color: ${glowColor};
-            --border-color: #392e4e;
+            --border-color: #EA638C;
             --background-dark: #060010;
             --white: hsl(0, 0%, 100%);
             --purple-primary: rgba(132, 0, 255, 1);
@@ -719,19 +719,64 @@ const MagicBento: React.FC<BentoProps> = ({
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
                 >
-                  {card.image && (
+                  {card.image && index === 0 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={110}
+                      width={150}
                       height={250}
-                      className="object-contain absolute top-4 right-4 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
-                  <div className="card__header flex justify-between gap-3 relative text-white">
+                  {card.image && index === 1 && (
+                    <Image
+                      src={card.image}
+                      alt={card.title}
+                      width={100}
+                      height={200}
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
+                  )}
+                  {card.image && index === 2 && (
+                    <Image
+                      src={card.image}
+                      alt={card.title}
+                      width={300}
+                      height={500}
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
+                  )}
+                  {card.image && index === 3 && (
+                    <Image
+                      src={card.image}
+                      alt={card.title}
+                      width={150}
+                      height={250}
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
+                  )}
+                  {card.image && index === 4 && (
+                    <Image
+                      src={card.image}
+                      alt={card.title}
+                      width={200}
+                      height={300}
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
+                  )}
+                  {card.image && index === 5 && (
+                    <Image
+                      src={card.image}
+                      alt={card.title}
+                      width={300}
+                      height={500}
+                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
+                  )}
+                  <div className="card__header flex justify-between gap-3 relative text-black">
                     <span className="card__label text-base">{card.label}</span>
                   </div>
-                  <div className="card__content flex flex-col relative text-white">
+                  <div className="card__content flex flex-col relative text-black">
                     <h3
                       className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? "text-clamp-1" : ""}`}
                     >

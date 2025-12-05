@@ -1,26 +1,93 @@
+import { useEffect, useRef } from "react"
 import MiniTitle from "../ui/MiniTitle"
 import Image from "next/image"
 import { ChevronRight, Dumbbell, Activity, Trophy } from "lucide-react"
 import Divider from "../ui/Divider"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useTranslations } from "next-intl"
+
+gsap.registerPlugin(ScrollTrigger)
 
 const MottoSection = () => {
-  return (
-    <div className="container mx-auto">
-      <div className="w-full max-w-7xl mx-auto flex flex-col p-4 md:items-center">
-        {/* Titles */}
-        <div className="w-full max-w-md ">
-          <MiniTitle text="The Blanca difference" className="self-start" />
-          <h2 className="text-4xl font-medium py-6">Game. Set. Unmatched. Meet Blanca Padel.</h2>
-          <p className="py-2 lg:hidden">
-            Minimal design, top performance for all levels, and options to test drive before buying.
-          </p>
-        </div>
+  const t = useTranslations("MottoSection")
+  const leftContainerRef = useRef<HTMLDivElement>(null)
+  const rightContainerRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    if (!leftContainerRef.current || !rightContainerRef.current) return
+
+    const lefContainer = leftContainerRef.current
+    const rightContainer = rightContainerRef.current
+    const headerOffset = 120
+    const mm = gsap.matchMedia()
+
+    mm.add(
+      {
+        isDesktop: "(min-width: 768px)",
+        isMobile: "(max-width: 767px)",
+      },
+      context => {
+        /* Fade and Scale Animation on scroll */
+        const inroAnimation = gsap.fromTo(
+          lefContainer,
+          { opacity: 1, scale: 1 },
+          {
+            ease: "none",
+            scrollTrigger: {
+              trigger: rightContainer,
+              start: `top top+=${headerOffset}`,
+              end: () => `+=${rightContainer.scrollHeight * 0.4}`,
+              scrub: 0.4,
+            },
+          }
+        )
+
+        /* Smooth Pin and Soft Release */
+        const pinTrigger = ScrollTrigger.create({
+          trigger: rightContainer,
+          start: `top top+=${headerOffset}`,
+          end: "center 5%",
+          pin: lefContainer,
+          pinSpacing: false,
+          scrub: true,
+          anticipatePin: 1,
+          onLeave: () => {
+            gsap.to(lefContainer, {
+              opacity: 1,
+              scale: 1,
+              duration: 0.5,
+              ease: "power2.out",
+            })
+          },
+          onEnterBack: () => {
+            gsap.to(lefContainer, {
+              opacity: 1,
+              scale: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            })
+          },
+        })
+
+        return () => {
+          inroAnimation.kill()
+          pinTrigger.kill()
+        }
+      }
+    )
+
+    return () => mm.revert()
+  }, [])
+
+  return (
+    <div className="container mx-auto pb-20">
+      <div className="w-full max-w-7xl mx-auto flex flex-col p-4 md:items-center">
         {/* Gallery*/}
-        <div className="grid grid-cols-12 gap-4">
+        <div className="grid grid-cols-12 gap-8">
           {/* Picture and Text Below it */}
-          <div className="flex flex-col col-span-4">
-            <div className="w-full h-auto aspect-448/337 rounded-xl overflow-hidden mb-10 relative">
+          <div ref={leftContainerRef} className="flex flex-col col-span-4">
+            <div className="w-full h-auto aspect-448/337 rounded-xl overflow-hidden mb-4 relative">
               <Image
                 src="/image-1.png"
                 alt="Coach's image doing a pose"
@@ -31,16 +98,26 @@ const MottoSection = () => {
               />
             </div>
             <p className="text-pretty">
-              Blanca Padel was born in 2022, in sunny ☀️🌴 San Diego, California. Built for a
-              community of crazy padel friends (the best kind) who demanded high-performance padel
-              gear that would fit their modern style and didn't break the bank.
+              {t("brief") ||
+                "Morvafit was built from years of hands-on coaching, movement training, and a passion for empowering women. From Pilates foundations to strength and mobility work, every program is designed to help you move better, feel stronger, and build lasting confidence."}
             </p>
           </div>
 
           {/* Scrollable div */}
-          <div className="col-span-8 flex flex-col items-stretch">
+          <div ref={rightContainerRef} className="col-span-8 flex flex-col items-stretch">
+            {/* Titles */}
+            <div className="w-full max-w-md ">
+              <MiniTitle text={t("miniTitle") || "The Morvafit Method"} className="self-start" />
+              <h2 className="text-4xl font-medium py-6">
+                {t("reImaginedmethod") || "Strength, Balance, Confidence — Reimagined for Women."}
+              </h2>
+              <p className="py-2 lg:hidden">
+                {t("personalizedWorkouts") ||
+                  "Personalized workouts blending Pilates, strength training, and mobility—crafted to elevate your energy, posture, and confidence."}
+              </p>
+            </div>
             {/* Video */}
-            <div className="w-full h-auto aspect-904/678 rounded-xl overflow-hidden mb-10 relative">
+            <div className="w-full h-auto aspect-904/678 rounded-xl overflow-hidden mb-4 relative">
               <div className="relative w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-center">
                 <video
                   className="object-cover w-full h-full"
@@ -63,7 +140,7 @@ const MottoSection = () => {
                   </span>
                 </a>
                 <span className="font-light text-xs md:caption text-[#bfbfbf] leading-none!">
-                  Achieve the dream body
+                  {t("dreamBody") || "Achieve the dream body"}
                 </span>
 
                 <div className="absolute top-2.5 md:top-0 bottom-2 right-0 w-14 md:w-24 px-2.25 md:px-3.5 overflow-hidden">
@@ -80,8 +157,8 @@ const MottoSection = () => {
 
             {/* Below the video content */}
             <h3 className="max-md:order-first body md:h3  w-full max-w-2xl max-md:mb-10 text-3xl">
-              Minimal design, top performance for all levels, and options to test drive before
-              buying.
+              {t("personalizedWorkouts") ||
+                "Personalized workouts blending Pilates, strength training, and mobility—crafted to elevate your energy, posture, and confidence."}
             </h3>
 
             <Divider />
@@ -97,11 +174,13 @@ const MottoSection = () => {
                     <Dumbbell size={32} />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <p className="font-bold text-lg">Minimal</p>
+                    <p className="font-bold text-lg">
+                      {t("movementFocused") || "Mindful Movement"}
+                    </p>
                     <div className="flex-1 flex flex-row items-stretch gap-x-6">
                       <div className="md:pr-16">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eum officia
-                        voluptatibus iusto quia quibusdam adipisci pariatur.
+                        {t("movementFocusedDesc") ||
+                          "Every exercise is intentional—designed to improve alignment, enhance mobility, and activate deep strength for long-term results."}
                       </div>
                     </div>
                   </div>
@@ -116,11 +195,11 @@ const MottoSection = () => {
                     <Activity size={32} />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <p className="font-bold text-lg">All Levels</p>
+                    <p className="font-bold text-lg">{t("forEveryLevel") || "For Every Level"}</p>
                     <div className="flex-1 flex flex-row items-stretch gap-x-6">
                       <div className="md:pr-16">
-                        All our products are suitable for all levels and playstyles, from beginners
-                        to advanced players.
+                        {t("forEveryLevelDesc") ||
+                          "Whether you're new to Pilates or experienced in fitness, each program adapts to your body, pace, and goals—no intimidation, only progress."}
                       </div>
                     </div>
                   </div>
@@ -135,12 +214,11 @@ const MottoSection = () => {
                     <Trophy size={32} />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <p className="font-medium">Quality</p>
+                    <p className="font-medium">{t("provenMethodology") || "Proven Methodology"}</p>
                     <div className="flex-1 flex flex-row items-stretch gap-x-6">
                       <div className="md:pr-16">
-                        Our suite of racquets feature the same modern quality materials used in
-                        professional grade paddles e.g. 3k-&gt;18k carbon, multi-eva foam and a
-                        reinforced carbon fiber tube frame.
+                        {t("provenMethodologyDesc") ||
+                          "Pilates principles, strength training, dance-inspired conditioning, and mobility work come together for a balanced, sustainable transformation."}
                       </div>
                     </div>
                   </div>

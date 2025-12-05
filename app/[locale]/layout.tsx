@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl"
 import { locales, localeDirections } from "@/i18n/config"
 import { routing } from "@/i18n/routing"
 import { notFound } from "next/navigation"
+import LenisProvider from "@/components/providers/LenisProvider"
 import "@/styles/globals.css"
 
 const montserrat = Montserrat({
@@ -51,7 +52,9 @@ export default async function LocaleLayout({
       className={locale === "fa" ? vazirmatn.className : montserrat.className}
     >
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <LenisProvider>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </LenisProvider>
       </body>
     </html>
   )
