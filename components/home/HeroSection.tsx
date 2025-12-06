@@ -43,7 +43,7 @@ const HeroSection = () => {
             onClick={() => {
               document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })
             }}
-            className="bg-accent text-accent-foreground rounded-lg p-4 hover:bg-accent-hover"
+            className="bg-accent text-accent-foreground px-8 py-4 rounded-full hover:bg-accent-hover"
           >
             {t("CTA") || "Get in Touch"}
           </button>

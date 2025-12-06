@@ -636,7 +636,7 @@ const UserForm: React.FC = () => {
                         key={goal}
                         type="button"
                         onClick={() => handleInputChange("primaryGoal", goal)}
-                        className={`px-4 py-3 rounded-lg border transition-all ${
+                        className={`px-8 py-4 rounded-full border transition-all ${
                           formData.primaryGoal === goal
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -675,7 +675,7 @@ const UserForm: React.FC = () => {
                         key={level.value}
                         type="button"
                         onClick={() => handleInputChange("activityLevel", level.value)}
-                        className={`w-full px-4 py-3 rounded-lg border text-left transition-all ${
+                        className={`w-full px-8 py-4 rounded-full border text-left transition-all ${
                           formData.activityLevel === level.value
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -711,7 +711,7 @@ const UserForm: React.FC = () => {
                         key={level}
                         type="button"
                         onClick={() => handleInputChange("experienceLevel", level)}
-                        className={`px-4 py-3 rounded-lg border transition-all ${
+                        className={`px-8 py-4 rounded-full border transition-all ${
                           formData.experienceLevel === level
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -747,7 +747,7 @@ const UserForm: React.FC = () => {
                         key={day}
                         type="button"
                         onClick={() => toggleWorkoutDay(day)}
-                        className={`px-3 py-3 rounded-lg border transition-all ${
+                        className={`px-8 py-4 rounded-full border transition-all ${
                           formData.workoutDays.includes(day)
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -785,7 +785,7 @@ const UserForm: React.FC = () => {
                         key={time}
                         type="button"
                         onClick={() => handleInputChange("preferredTime", time)}
-                        className={`px-4 py-3 rounded-lg border transition-all text-sm ${
+                        className={`px-8 py-4 rounded-full border transition-all text-sm ${
                           formData.preferredTime === time
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -818,7 +818,7 @@ const UserForm: React.FC = () => {
                         key={duration}
                         type="button"
                         onClick={() => handleInputChange("sessionDuration", duration)}
-                        className={`px-4 py-3 rounded-lg border transition-all ${
+                        className={`px-8 py-4 rounded-full border transition-all ${
                           formData.sessionDuration === duration
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -863,7 +863,7 @@ const UserForm: React.FC = () => {
                         key={diet}
                         type="button"
                         onClick={() => handleInputChange("dietaryPreference", diet)}
-                        className={`px-4 py-3 rounded-lg border transition-all ${
+                        className={`px-8 py-4 rounded-full border transition-all ${
                           formData.dietaryPreference === diet
                             ? "border-transparent"
                             : "border-white/20 bg-white/5 hover:bg-white/10"
@@ -1021,7 +1021,7 @@ const UserForm: React.FC = () => {
               type="button"
               onClick={handleBack}
               disabled={currentStep === 0}
-              className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`flex items-center px-8 py-4 rounded-full font-medium transition-all ${
                 currentStep === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-white/10"
               }`}
               style={{ color: "oklch(0.9465 0.013 17.39)" }}
@@ -1034,7 +1034,7 @@ const UserForm: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center px-6 py-3 rounded-lg font-semibold text-white transition-all hover:scale-105"
+                className="flex items-center px-8 py-4 rounded-full font-semibold text-white transition-all hover:scale-105"
                 style={{ background: "oklch(0.6787 0.1707 3.82)" }}
               >
                 {t("form.nextButton") || "Next"}
@@ -1045,7 +1045,7 @@ const UserForm: React.FC = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex items-center px-8 py-3 rounded-lg font-semibold text-white transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center px-8 py-4 rounded-full font-semibold text-white transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ background: "oklch(0.6787 0.1707 3.82)" }}
               >
                 {isSubmitting ? (

@@ -217,7 +217,7 @@ const Footer = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-2 rounded-xl bg-linear-to-r from-rose-500 to-pink-500 text-white text-sm font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-rose-500/25"
+                  className="px-6 py-2 rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white text-sm font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-rose-500/25"
                 >
                   {t("subscribe") || "Subscribe"}
                 </motion.button>
@@ -268,7 +268,7 @@ const Footer = () => {
         }}
         transition={{ duration: 0.3 }}
         onClick={scrollToTop}
-        className={`fixed bottom-8 right-8 p-3 rounded-xl bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/25 hover:shadow-xl hover:shadow-rose-500/30 transition-all duration-300 z-40 ${
+        className={`fixed bottom-8 right-8 p-3 rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/25 hover:shadow-xl hover:shadow-rose-500/30 transition-all duration-300 z-40 ${
           showScrollTop ? "pointer-events-auto" : "pointer-events-none"
         }`}
         aria-label="Scroll to top"

@@ -215,9 +215,9 @@ const Header = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100">
                   <Image
-                    className="object-contain h-8 w-auto"
-                    width={100}
-                    height={40}
+                    className="object-contain h-30 w-auto"
+                    width={250}
+                    height={120}
                     src="/morvafit-logo.svg"
                     alt="Morvafit Logo"
                   />
