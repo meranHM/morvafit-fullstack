@@ -13,5 +13,7 @@ export const routing = defineRouting({
     "/verify-email": "/verify-email",
     "/contact": "/contact",
     "/shop": "/shop",
+    "/admin": "/admin",
+    "/dashboard": "/dashboard",
   },
 })

@@ -34,11 +34,11 @@ type TabType = "overview" | "videos" | "payments" | "health" | "account" | "prog
 
 // Mock data
 const mockUser = {
-  name: "Sarah Johnson",
-  email: "sarah@example.com",
-  phone: "+1 (555) 123-4567",
+  name: "Morvarid Haji",
+  email: "morvaridfitness@gmail.com",
+  phone: "+971 (58) 849-8855",
   avatar: "/avatar.jpg",
-  memberSince: "January 2024",
+  memberSince: "December 2025",
   planStatus: "Active",
   nextPayment: "April 15, 2024",
 }

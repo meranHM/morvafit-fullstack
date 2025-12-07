@@ -1,11 +1,20 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { ShoppingBag, User2Icon, Menu, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { routing } from "@/i18n/routing"
+
+type AppPathnames = keyof typeof routing.pathnames
+
+type NavLink = {
+  key: string
+  label: string
+  href: AppPathnames
+}
 
 const Header = () => {
   const t = useTranslations("Navbar")
@@ -46,7 +55,7 @@ const Header = () => {
     }
   }, [mobileMenuOpen])
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { href: "/", label: t("home"), key: "home" },
     { href: "/about", label: t("about"), key: "about" },
     { href: "/shop", label: t("shop"), key: "shop" },
@@ -128,7 +137,7 @@ const Header = () => {
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <Link
-                  href="/dashboard/profile"
+                  href="/dashboard"
                   className="relative p-2.5 rounded-xl text-gray-700 transition-all duration-300 hover:text-rose-600 group overflow-hidden"
                 >
                   <User2Icon size={24} className="relative z-10" />
@@ -257,7 +266,7 @@ const Header = () => {
                     transition={{ duration: 0.3, delay: 0.5 }}
                   >
                     <Link
-                      href="/dashboard/profile"
+                      href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
                     >
