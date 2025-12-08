@@ -14,6 +14,10 @@ import {
 import { type LucideIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+interface UserFormProps {
+  className?: string
+}
+
 interface FormData {
   fullName: string
   age: string
@@ -59,7 +63,7 @@ const useAuth = () => {
   return { isAuthenticated, setIsAuthenticated }
 }
 
-const UserForm: React.FC = () => {
+const UserForm: React.FC<UserFormProps> = ({ className }) => {
   const t = useTranslations("UserForm")
   const { isAuthenticated, setIsAuthenticated } = useAuth()
   const [currentStep, setCurrentStep] = useState<number>(0)
@@ -270,10 +274,7 @@ const UserForm: React.FC = () => {
       >
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-12">
-            <div
-              className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
-              style={{ background: "oklch(0.6787 0.1707 3.82)" }}
-            >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center bg-linear-to-r from-rose-500 to-pink-500">
               <User className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl font-bold mb-4" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
@@ -285,8 +286,7 @@ const UserForm: React.FC = () => {
             </p>
             <button
               onClick={() => setIsAuthenticated(true)}
-              className="px-8 py-4 rounded-full font-semibold text-white transition-all hover:scale-105"
-              style={{ background: "oklch(0.6787 0.1707 3.82)" }}
+              className="px-8 py-4 rounded-full font-semibold bg-linear-to-r from-rose-500 to-pink-500 text-white transition-all hover:scale-105"
             >
               {t("authGate.CTA") || "Sign In / Sign Up"}
             </button>
@@ -302,10 +302,7 @@ const UserForm: React.FC = () => {
       <section className="py-24 px-4" style={{ background: "oklch(0.2389 0.0076 211.07)" }}>
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-12">
-            <div
-              className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center animate-pulse"
-              style={{ background: "oklch(0.6787 0.1707 3.82)" }}
-            >
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center animate-pulse bg-linear-to-r from-rose-500 to-pink-500">
               <Check className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-4xl font-bold mb-4" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
@@ -326,7 +323,10 @@ const UserForm: React.FC = () => {
   const bmiCategory = bmi ? getBMICategory(parseFloat(bmi)) : null
 
   return (
-    <section className="py-24 px-4" style={{ background: "oklch(0.2389 0.0076 211.07)" }}>
+    <section
+      className={`mx-auto ${className}`}
+      style={{ background: "oklch(0.2389 0.0076 211.07)" }}
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -1034,8 +1034,7 @@ const UserForm: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center px-8 py-4 rounded-full font-semibold text-white transition-all hover:scale-105"
-                style={{ background: "oklch(0.6787 0.1707 3.82)" }}
+                className="flex items-center px-8 py-4 rounded-full font-semibold bg-linear-to-r from-rose-500 to-pink-500 text-white transition-all hover:scale-105"
               >
                 {t("form.nextButton") || "Next"}
                 <ChevronRight className="w-5 h-5 ml-2" />

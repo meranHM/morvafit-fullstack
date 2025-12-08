@@ -63,6 +63,7 @@ const Header = () => {
     { href: "/contact", label: t("contact"), key: "contact" },
   ]
 
+  const logoSrc = isScrolled ? "/morvafit-logo-black.svg" : "/morvafit-logo-white.svg"
   return (
     <>
       <motion.header
@@ -70,7 +71,9 @@ const Header = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-black/5" : "bg-transparent"
+          isScrolled
+            ? "bg-background/60 backdrop-blur-lg shadow-lg shadow-black/5"
+            : "bg-transparent"
         }`}
       >
         {/* Gradient accent line */}
@@ -93,7 +96,7 @@ const Header = () => {
                   className="object-contain h-25 w-auto"
                   width={200}
                   height={100}
-                  src="/morvafit-logo.svg"
+                  src={logoSrc}
                   alt="Morvafit Logo"
                   priority
                 />
@@ -113,7 +116,9 @@ const Header = () => {
                     href={link.href}
                     onMouseEnter={() => setActiveLink(link.key)}
                     onMouseLeave={() => setActiveLink("")}
-                    className="relative px-4 py-2 text-md font-medium text-gray-900 transition-colors duration-300 hover:text-rose-600 group"
+                    className={`relative px-4 py-2 text-md font-medium transition-colors duration-300 hover:text-rose-600 group ${
+                      isScrolled ? "text-gray-900" : "text-white"
+                    }`}
                   >
                     {link.label}
                     <motion.span
@@ -138,24 +143,28 @@ const Header = () => {
               >
                 <Link
                   href="/dashboard"
-                  className="relative p-2.5 rounded-xl text-gray-700 transition-all duration-300 hover:text-rose-600 group overflow-hidden"
+                  className={`relative p-2.5 rounded-xl transition-all duration-300 hover:text-rose-600 group overflow-hidden ${
+                    isScrolled ? "text-gray-700" : "text-white"
+                  }`}
                 >
                   <User2Icon size={24} className="relative z-10" />
                 </Link>
               </motion.div>
 
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
               >
                 <Link
                   href="/shop"
-                  className="relative p-2.5 rounded-xl text-gray-700 transition-all duration-300 hover:text-rose-600 group overflow-hidden"
+                  className={`relative p-2.5 rounded-xl transition-all duration-300 hover:text-rose-600 group overflow-hidden ${
+                    isScrolled ? "text-gray-800" : "text-white"
+                  }`}
                 >
                   <ShoppingBag size={24} className="relative z-10" />
                 </Link>
-              </motion.div>
+              </motion.div> */}
             </div>
 
             {/* Mobile Menu Button */}
@@ -227,7 +236,7 @@ const Header = () => {
                     className="object-contain h-30 w-auto"
                     width={250}
                     height={120}
-                    src="/morvafit-logo.svg"
+                    src="/morvafit-logo-black.svg"
                     alt="Morvafit Logo"
                   />
                   <button
@@ -275,7 +284,7 @@ const Header = () => {
                     </Link>
                   </motion.div>
 
-                  <motion.div
+                  {/* <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.6 }}
@@ -288,7 +297,7 @@ const Header = () => {
                       <ShoppingBag size={20} />
                       <span>Shop</span>
                     </Link>
-                  </motion.div>
+                  </motion.div> */}
                 </div>
               </div>
             </motion.div>

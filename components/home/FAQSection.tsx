@@ -112,7 +112,11 @@ const categories = [
   { name: "Results", count: faqs.filter(f => f.category === "Results").length },
 ]
 
-const FAQSection = () => {
+interface FAQSectionProps {
+  className?: string
+}
+
+const FAQSection: React.FC<FAQSectionProps> = ({ className }) => {
   const [openId, setOpenId] = useState<number | null>(1)
   const [activeCategory, setActiveCategory] = useState("All")
 
@@ -124,7 +128,9 @@ const FAQSection = () => {
   }
 
   return (
-    <section className="py-20 lg:py-32 bg-linear-to-br from-gray-50 via-white to-rose-50/30 relative overflow-hidden">
+    <section
+      className={`bg-linear-to-br from-gray-50 via-white to-rose-50/30 relative overflow-hidden ${className}`}
+    >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

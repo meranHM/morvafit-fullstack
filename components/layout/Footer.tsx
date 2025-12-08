@@ -62,16 +62,16 @@ const Footer = () => {
   ]
 
   const contactInfo = [
-    { icon: Mail, text: "contact@morvafit.com", href: "mailto:contact@morvafit.com" },
-    { icon: Phone, text: "+1 (555) 123-4567", href: "tel:+15551234567" },
-    { icon: MapPin, text: "Los Angeles, CA", href: "#" },
+    { icon: Mail, text: "morvafitness@gmail.com", href: "mailto:morvafitness@gmail.com" },
+    { icon: Phone, text: "+971 (58) 849-8855", href: "tel:+971588498855" },
+    { icon: MapPin, text: "Dubai, UAE", href: "#" },
   ]
 
   const currentYear = new Date().getFullYear()
 
   return (
     <footer className="relative bg-linear-to-br from-gray-50 via-white to-rose-50/30 ">
-      <div className="bg-background py-6">
+      <div className="py-6 md:py-10 lg:py-16">
         <ScrollVelocity
           texts={["KEEP MOVING · ", "KEEP GROWING · ", "KEEP SHOWING UP"]}
           velocity={50}
@@ -95,7 +95,7 @@ const Footer = () => {
                 className="object-contain h-24 w-auto"
                 width={250}
                 height={120}
-                src="/morvafit-logo.svg"
+                src="/morvafit-logo-black.svg"
                 alt="Morvafit Logo"
               />
             </Link>

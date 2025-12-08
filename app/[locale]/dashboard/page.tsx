@@ -161,7 +161,7 @@ const UserDashboard = () => {
                 className="object-contain h-25 w-auto"
                 width={250}
                 height={100}
-                src="/morvafit-logo.svg"
+                src="/morvafit-logo-black.svg"
                 alt="Morvafit Logo"
               />
             </Link>

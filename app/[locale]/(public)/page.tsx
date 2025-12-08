@@ -18,20 +18,20 @@ const FinalCTASection = dynamic(() => import("@/components/home/FinalCTASection"
 const Home = () => {
   return (
     <HomeWithLoader>
-      <main className="overflow-hidden flex flex-col gap-40">
+      <main>
         {/* Above the fold - load immediately */}
         <HeroSection />
-        <ServicesSection />
+        <ServicesSection className="py-16 md:py-24 lg:py-32" />
 
         {/* Below the fold - lazy load */}
-        <Suspense fallback={<div className="h-screen flex flex-col gap-40" />}>
-          <AboutSection />
-          <MottoSection />
-          <TestimonialsSection />
-          {/* <TransformationsSection /> */}
-          <UserForm />
-          <FAQSection />
-          {/* <FinalCTASection /> */}
+        <Suspense fallback={<div className="h-screen" />}>
+          <MottoSection className="py-16 md:py-24 lg:py-32" />
+          <UserForm className="py-16 md:py-24 lg:py-32" />
+          <AboutSection className="py-16 md:py-24 lg:py-32" />
+          <TestimonialsSection className="py-16 md:py-24 lg:py-32" />
+          {/* <TransformationsSection className="py-16 md:py-24 lg:py-32" /> */}
+          <FAQSection className="py-16 md:py-24 lg:py-32" />
+          {/* <FinalCTASection className="py-20 md:py-28 lg:py-36" /> */}
         </Suspense>
       </main>
     </HomeWithLoader>

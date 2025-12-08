@@ -87,7 +87,7 @@ export const LoadingAnimation = ({ onComplete }: LoadingAnimationProps) => {
             }}
           >
             <Image
-              src="/morvafit-logo.svg"
+              src="/morvafit-logo-black.svg"
               alt="MorvaFit"
               width={200}
               height={80}

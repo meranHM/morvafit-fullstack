@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react"
-import Image from "next/image"
 
 const testimonials = [
   {
@@ -53,7 +52,11 @@ const testimonials = [
   },
 ]
 
-const TestimonialsSection = () => {
+interface TestimonialsSectionProps {
+  className?: string
+}
+
+const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ className }) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
@@ -83,7 +86,9 @@ const TestimonialsSection = () => {
   }
 
   return (
-    <section className="py-20 lg:py-32 bg-linear-to-br from-gray-50 via-white to-rose-50/30 relative overflow-hidden">
+    <section
+      className={`bg-linear-to-br from-gray-50 via-white to-rose-50/30 relative overflow-hidden ${className}`}
+    >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

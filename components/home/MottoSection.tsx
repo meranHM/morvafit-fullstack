@@ -9,7 +9,11 @@ import { useTranslations } from "next-intl"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const MottoSection = () => {
+interface MottoSectionProps {
+  className?: string
+}
+
+const MottoSection: React.FC<MottoSectionProps> = ({ className }) => {
   const t = useTranslations("MottoSection")
   const leftContainerRef = useRef<HTMLDivElement>(null)
   const rightContainerRef = useRef<HTMLDivElement>(null)
@@ -28,51 +32,38 @@ const MottoSection = () => {
         isMobile: "(max-width: 767px)",
       },
       context => {
-        /* Fade and Scale Animation on scroll */
-        const inroAnimation = gsap.fromTo(
-          lefContainer,
-          { opacity: 1, scale: 1 },
-          {
-            ease: "none",
-            scrollTrigger: {
-              trigger: rightContainer,
-              start: `top top+=${headerOffset}`,
-              end: () => `+=${rightContainer.scrollHeight * 0.4}`,
-              scrub: 0.4,
+        const { isDesktop } = context.conditions as { isDesktop: boolean; isMobile: boolean }
+
+        if (isDesktop) {
+          const pinTrigger = ScrollTrigger.create({
+            trigger: rightContainer,
+            start: `top top+=${headerOffset}`,
+            end: "42% 5%",
+            pin: lefContainer,
+            pinSpacing: false,
+            scrub: true,
+            anticipatePin: 1,
+            onLeave: () => {
+              gsap.to(lefContainer, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.5,
+                ease: "power2.out",
+              })
             },
+            onEnterBack: () => {
+              gsap.to(lefContainer, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.4,
+                ease: "power2.out",
+              })
+            },
+          })
+
+          return () => {
+            pinTrigger.kill()
           }
-        )
-
-        /* Smooth Pin and Soft Release */
-        const pinTrigger = ScrollTrigger.create({
-          trigger: rightContainer,
-          start: `top top+=${headerOffset}`,
-          end: "center 5%",
-          pin: lefContainer,
-          pinSpacing: false,
-          scrub: true,
-          anticipatePin: 1,
-          onLeave: () => {
-            gsap.to(lefContainer, {
-              opacity: 1,
-              scale: 1,
-              duration: 0.5,
-              ease: "power2.out",
-            })
-          },
-          onEnterBack: () => {
-            gsap.to(lefContainer, {
-              opacity: 1,
-              scale: 1,
-              duration: 0.4,
-              ease: "power2.out",
-            })
-          },
-        })
-
-        return () => {
-          inroAnimation.kill()
-          pinTrigger.kill()
         }
       }
     )
@@ -81,15 +72,15 @@ const MottoSection = () => {
   }, [])
 
   return (
-    <div className="container mx-auto pb-20">
+    <div className={`container mx-auto ${className}`}>
       <div className="w-full max-w-7xl mx-auto flex flex-col p-4 md:items-center">
         {/* Gallery*/}
-        <div className="grid grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Picture and Text Below it */}
-          <div ref={leftContainerRef} className="flex flex-col col-span-4">
-            <div className="w-full h-auto aspect-448/337 rounded-xl overflow-hidden mb-4 relative">
+          <div ref={leftContainerRef} className="flex flex-col col-span-12 md:col-span-4">
+            <div className="w-full h-auto aspect-4/5 rounded-xl overflow-hidden mb-4 relative">
               <Image
-                src="/image-1.png"
+                src="/service-image-2.png"
                 alt="Coach's image doing a pose"
                 width={382}
                 height={507}
@@ -97,14 +88,17 @@ const MottoSection = () => {
                 loading="lazy"
               />
             </div>
-            <p className="text-pretty">
+            <p className="text-pretty text-center md:text-start">
               {t("brief") ||
                 "Morvafit was built from years of hands-on coaching, movement training, and a passion for empowering women. From Pilates foundations to strength and mobility work, every program is designed to help you move better, feel stronger, and build lasting confidence."}
             </p>
           </div>
 
           {/* Scrollable div */}
-          <div ref={rightContainerRef} className="col-span-8 flex flex-col items-stretch">
+          <div
+            ref={rightContainerRef}
+            className="col-span-12 md:col-span-8 flex flex-col items-stretch"
+          >
             {/* Titles */}
             <div className="w-full max-w-md ">
               <MiniTitle text={t("miniTitle") || "The Morvafit Method"} className="self-start" />
@@ -164,7 +158,7 @@ const MottoSection = () => {
             <Divider />
 
             <div className=" max-md:overflow-hidden max-md:-mx-4 max-md:w-auto max-md:px-4">
-              <div className="flex!" aria-live="polite">
+              <div className="flex flex-col md:flex-row! gap-6" aria-live="polite">
                 <div
                   className="flex! flex-col items-start gap-y-6 md:gap-y-8"
                   role="group"

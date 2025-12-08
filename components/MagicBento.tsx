@@ -24,6 +24,7 @@ export interface BentoProps {
   glowColor?: string
   clickEffect?: boolean
   enableMagnetism?: boolean
+  onCardClick?: (cardId: number) => void
 }
 
 const DEFAULT_PARTICLE_COUNT = 12
@@ -36,31 +37,37 @@ const cardData: BentoCardProps[] = [
     color: "#f6eaea",
     title: "ModelFit",
     description: "My special workout plan",
-    image: "/services-Modelfit-noBg.png",
+    image: "/service-image-1.png",
   },
   {
     color: "#f6eaea",
     title: "Personal",
     description: "Your personal plan",
-    image: "/services-PersonalPlan-noBg.png",
+    image: "/service-image-3.png",
   },
   {
     color: "#f6eaea",
     title: "Fit and Fierce",
     description: "Stay fit in every part of your body",
-    image: "/services-GluteGoals-noBg.png",
+    image: "/service-image-4.png",
   },
   {
     color: "#f6eaea",
     title: "Abs & Core Goals",
     description: "Home edition",
-    image: "/services-AbsCore-noBg.png",
+    image: "/service-image-5.png",
   },
   {
     color: "#f6eaea",
     title: "Glute Goals",
     description: "Home Edition",
-    image: "/services-FitFierce-noBg.png",
+    image: "/service-image-6.png",
+  },
+  {
+    color: "#f6eaea",
+    title: "Modern Techniques",
+    description: "Home Edition",
+    image: "/service-image-2.png",
   },
 ]
 
@@ -118,6 +125,7 @@ const ParticleCard: React.FC<{
   enableTilt?: boolean
   clickEffect?: boolean
   enableMagnetism?: boolean
+  onClick?: () => void
 }> = ({
   children,
   className = "",
@@ -128,6 +136,7 @@ const ParticleCard: React.FC<{
   enableTilt = true,
   clickEffect = false,
   enableMagnetism = false,
+  onClick,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null)
   const particlesRef = useRef<HTMLDivElement[]>([])
@@ -359,8 +368,9 @@ const ParticleCard: React.FC<{
   return (
     <div
       ref={cardRef}
-      className={`${className} relative overflow-hidden`}
+      className={`${className} relative overflow-hidden cursor-pointer`}
       style={{ ...style, position: "relative", overflow: "hidden" }}
+      onClick={onClick}
     >
       {children}
     </div>
@@ -550,6 +560,7 @@ const MagicBento: React.FC<BentoProps> = ({
   glowColor = DEFAULT_GLOW_COLOR,
   clickEffect = true,
   enableMagnetism = true,
+  onCardClick,
 }) => {
   const gridRef = useRef<HTMLDivElement>(null)
   const isMobile = useMobileDetection()
@@ -718,6 +729,7 @@ const MagicBento: React.FC<BentoProps> = ({
                   enableTilt={enableTilt}
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
+                  onClick={() => onCardClick?.(index)}
                 >
                   {card.image && index === 0 && (
                     <Image
@@ -725,34 +737,34 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={150}
                       height={250}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute top-1 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 1 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={100}
+                      width={150}
                       height={200}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute top-1 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 2 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={300}
-                      height={500}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={150}
+                      height={200}
+                      className="object-contain absolute top-1 right-7 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 3 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={150}
+                      width={250}
                       height={250}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-20 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 4 && (
@@ -761,7 +773,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={200}
                       height={300}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-6 right-1  hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 5 && (
@@ -770,7 +782,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={300}
                       height={500}
-                      className="object-contain absolute top-6 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-8 -right-10 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   <div className="card__header flex justify-between gap-3 relative text-black">
