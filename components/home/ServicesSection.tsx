@@ -19,7 +19,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ className }) => {
         <div className="w-full max-w-7xl mx-auto rounded-xl overflow-x-clip">
           <div className="flex flex-col items-center justify-center gap-4">
             <MiniTitle text={t("miniTitle") || "Plans"} />
-            <h2 className="text-4xl font-medium text-pretty max-w-lg text-center md:text-start px-2">
+            <h2 className="text-4xl font-medium text-pretty max-w-lg text-center px-2 pb-6 md:pb-8 lg:pb-12">
               {t("title") || "Use the most modern approaches and techniques"}
             </h2>
           </div>
@@ -34,7 +34,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ className }) => {
               clickEffect={true}
               spotlightRadius={300}
               particleCount={12}
-              glowColor="137, 2, 62"
+              glowColor="236, 0, 63"
               onCardClick={openModal}
             />
           </div>

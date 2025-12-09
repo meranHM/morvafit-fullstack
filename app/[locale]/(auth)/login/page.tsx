@@ -72,7 +72,7 @@ const AuthPage = () => {
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 90, 0],
-            opacity: [0.03, 0.05, 0.03],
+            opacity: [0.1, 0.25, 0.1],
           }}
           transition={{
             duration: 20,
@@ -85,7 +85,7 @@ const AuthPage = () => {
           animate={{
             scale: [1, 1.3, 1],
             rotate: [0, -90, 0],
-            opacity: [0.03, 0.05, 0.03],
+            opacity: [0.1, 0.25, 0.1],
           }}
           transition={{
             duration: 25,
@@ -110,7 +110,7 @@ const AuthPage = () => {
               className="object-contain h-40 w-auto"
               width={250}
               height={160}
-              src="/morvafit-logo.svg"
+              src="/morvafit-logo-black.svg"
               alt="Morvafit Logo"
             />
           </Link>

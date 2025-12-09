@@ -23,7 +23,7 @@ const MottoSection: React.FC<MottoSectionProps> = ({ className }) => {
 
     const lefContainer = leftContainerRef.current
     const rightContainer = rightContainerRef.current
-    const headerOffset = 120
+    const headerOffset = 20
     const mm = gsap.matchMedia()
 
     mm.add(
@@ -38,7 +38,7 @@ const MottoSection: React.FC<MottoSectionProps> = ({ className }) => {
           const pinTrigger = ScrollTrigger.create({
             trigger: rightContainer,
             start: `top top+=${headerOffset}`,
-            end: "42% 5%",
+            end: "37% 5%",
             pin: lefContainer,
             pinSpacing: false,
             scrub: true,
@@ -75,15 +75,18 @@ const MottoSection: React.FC<MottoSectionProps> = ({ className }) => {
     <div className={`container mx-auto ${className}`}>
       <div className="w-full max-w-7xl mx-auto flex flex-col p-4 md:items-center">
         {/* Gallery*/}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
           {/* Picture and Text Below it */}
-          <div ref={leftContainerRef} className="flex flex-col col-span-12 md:col-span-4">
-            <div className="w-full h-auto aspect-4/5 rounded-xl overflow-hidden mb-4 relative">
+          <div
+            ref={leftContainerRef}
+            className="flex flex-col items-center justify-start col-span-12 md:col-span-4"
+          >
+            <div className="w-lg h-auto rounded-xl overflow-hidden relative">
               <Image
-                src="/service-image-2.png"
+                src="/service-image-7.png"
                 alt="Coach's image doing a pose"
-                width={382}
-                height={507}
+                width={450}
+                height={550}
                 className="object-contain size-full"
                 loading="lazy"
               />

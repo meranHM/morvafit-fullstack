@@ -25,7 +25,7 @@ const Home = () => {
 
         {/* Below the fold - lazy load */}
         <Suspense fallback={<div className="h-screen" />}>
-          <MottoSection className="py-16 md:py-24 lg:py-32" />
+          <MottoSection className="py-16 " />
           <UserForm className="py-16 md:py-24 lg:py-32" />
           <AboutSection className="py-16 md:py-24 lg:py-32" />
           <TestimonialsSection className="py-16 md:py-24 lg:py-32" />

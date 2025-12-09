@@ -36,7 +36,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
 
   return (
     <div className={`container mx-auto ${className}`}>
-      <div className="w-full max-w-7xl flex p-4">
+      <div className="w-full max-w-7xl flex p-4 mx-auto">
         <div className="grid grid-cols-12 gap-4">
           {/* Text */}
           <div

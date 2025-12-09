@@ -284,7 +284,7 @@ const ServiceModal = ({ service, isOpen, onClose }: ServiceModalProps) => {
                       transition={{ delay: 0.2, type: "spring" }}
                       className="relative"
                     >
-                      <div className="relative w-full aspect-square">
+                      <div className="relative w-full aspect-square bg-rose-50 backdrop-blur-2xl rounded-full overflow-hidden">
                         <Image
                           src={service.image}
                           alt={service.title}

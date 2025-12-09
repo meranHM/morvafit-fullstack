@@ -43,7 +43,7 @@ const HeroSection = () => {
             <div className="flex-1" />
 
             {/* Hero Title */}
-            <div className="shrink-0 text-center mb-8 md:mb-24">
+            <div className="shrink-0 text-center mb-8 md:mb-48">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white leading-tight">
                 <ShinyText text={t("title")} />
               </h1>

@@ -41,13 +41,13 @@ export const LoadingAnimation = ({ onComplete }: LoadingAnimationProps) => {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-100 flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-rose-50/30"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-rose-50"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
-            scale: [1, 1.2, 1],
+            scale: [1, 1.5, 1],
             rotate: [0, 180, 360],
             opacity: [0.1, 0.2, 0.1],
           }}

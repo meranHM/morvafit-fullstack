@@ -34,37 +34,37 @@ const MOBILE_BREAKPOINT = 768
 
 const cardData: BentoCardProps[] = [
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "ModelFit",
     description: "My special workout plan",
     image: "/service-image-1.png",
   },
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "Personal",
     description: "Your personal plan",
     image: "/service-image-3.png",
   },
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "Fit and Fierce",
     description: "Stay fit in every part of your body",
     image: "/service-image-4.png",
   },
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "Abs & Core Goals",
     description: "Home edition",
     image: "/service-image-5.png",
   },
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "Glute Goals",
     description: "Home Edition",
     image: "/service-image-6.png",
   },
   {
-    color: "#f6eaea",
+    color: "#fff",
     title: "Modern Techniques",
     description: "Home Edition",
     image: "/service-image-2.png",
@@ -525,7 +525,7 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-2 p-3 max-w-216 select-none relative"
+    className="bento-section grid gap-2 p-3 max-w-7xl select-none relative"
     style={{ fontSize: "clamp(1rem, 0.9rem + 0.5vw, 1.5rem)" }}
     ref={gridRef}
   >
@@ -703,7 +703,7 @@ const MagicBento: React.FC<BentoProps> = ({
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive grid gap-2">
           {cardData.map((card, index) => {
-            const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[230px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
+            const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[280px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
               enableBorderGlow ? "card--border-glow" : ""
             }`
 
@@ -735,26 +735,26 @@ const MagicBento: React.FC<BentoProps> = ({
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={150}
-                      height={250}
-                      className="object-contain absolute top-1 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={350}
+                      height={450}
+                      className="object-contain absolute -top-12 -right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 1 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={150}
-                      height={200}
-                      className="object-contain absolute top-1 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={350}
+                      height={450}
+                      className="object-contain absolute -top-10 right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 2 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={150}
-                      height={200}
+                      width={350}
+                      height={450}
                       className="object-contain absolute top-1 right-7 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
@@ -762,27 +762,27 @@ const MagicBento: React.FC<BentoProps> = ({
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={250}
-                      height={250}
-                      className="object-contain absolute -top-20 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={450}
+                      height={450}
+                      className="object-contain absolute -top-28 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 4 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={200}
-                      height={300}
-                      className="object-contain absolute -top-6 right-1  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={350}
+                      height={450}
+                      className="object-contain absolute -top-12 right-1  hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 5 && (
                     <Image
                       src={card.image}
                       alt={card.title}
-                      width={300}
-                      height={500}
-                      className="object-contain absolute -top-8 -right-10 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      width={350}
+                      height={450}
+                      className="object-contain absolute -top-8 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   <div className="card__header flex justify-between gap-3 relative text-black">
