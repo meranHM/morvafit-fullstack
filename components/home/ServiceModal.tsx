@@ -214,7 +214,7 @@ const ServiceModal = ({ service, isOpen, onClose }: ServiceModalProps) => {
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-gray-100 transition-colors shadow-lg"
+                className="absolute top-4 right-4 z-20 p-3 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-gray-100 transition-colors shadow-lg"
               >
                 <X size={20} className="text-gray-700" />
               </motion.button>

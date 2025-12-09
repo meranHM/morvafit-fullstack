@@ -177,7 +177,7 @@ const AuthPage = () => {
                   className="object-contain h-10 w-auto mx-auto"
                   width={120}
                   height={48}
-                  src="/morvafit-logo.svg"
+                  src="/morvafit-logo-black.svg"
                   alt="Morvafit Logo"
                 />
               </Link>
