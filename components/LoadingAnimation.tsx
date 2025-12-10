@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import Image from "next/image"
 
 interface LoadingAnimationProps {
@@ -28,7 +28,7 @@ export const LoadingAnimation = ({ onComplete }: LoadingAnimationProps) => {
 
   useEffect(() => {
     if (progress === 100) {
-      // Wait a bit before completing
+      // Waiting a bit before completing
       const timeout = setTimeout(() => {
         onComplete()
       }, 500)
@@ -151,17 +151,19 @@ export const LoadingAnimation = ({ onComplete }: LoadingAnimationProps) => {
 
 // Hook to manage first-time loading
 export const useFirstTimeLoader = () => {
-  const [isFirstTime, setIsFirstTime] = useState(false)
+  // Initialize as null to indicate "checking" state
+  const [isFirstTime, setIsFirstTime] = useState<boolean | null>(null)
   const [showLoader, setShowLoader] = useState(true)
 
   useEffect(() => {
-    // Checking if user has visited before
+    // Check synchronously if possible
     const hasVisited = sessionStorage.getItem("morvafit_visited")
 
     if (!hasVisited) {
       setIsFirstTime(true)
       sessionStorage.setItem("morvafit_visited", "true")
     } else {
+      setIsFirstTime(false)
       setShowLoader(false)
     }
   }, [])
@@ -171,7 +173,10 @@ export const useFirstTimeLoader = () => {
   }
 
   return {
-    shouldShowLoader: isFirstTime && showLoader,
+    // Only showing loader if we've determined it's first time AND showLoader is true
+    // Don't show anything until we know (isFirstTime !== null)
+    shouldShowLoader: isFirstTime === true && showLoader,
+    isChecking: isFirstTime === null,
     handleLoadingComplete,
   }
 }
