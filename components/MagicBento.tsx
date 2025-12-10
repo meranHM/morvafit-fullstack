@@ -737,7 +737,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={350}
                       height={450}
-                      className="object-contain absolute -top-12 -right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-8 md:-top-12 -right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 1 && (
@@ -746,7 +746,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={350}
                       height={450}
-                      className="object-contain absolute -top-10 right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-8 md:-top-10 right-2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 2 && (
@@ -764,7 +764,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={450}
                       height={450}
-                      className="object-contain absolute -top-28 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-22 md:-top-28 right-1/2 translate-x-1/2 hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 4 && (
@@ -773,7 +773,7 @@ const MagicBento: React.FC<BentoProps> = ({
                       alt={card.title}
                       width={350}
                       height={450}
-                      className="object-contain absolute -top-12 right-1  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="object-contain absolute -top-14 right-1  hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   )}
                   {card.image && index === 5 && (

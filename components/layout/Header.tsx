@@ -74,7 +74,7 @@ const Header = () => {
           isScrolled
             ? "bg-background/60 backdrop-blur-lg shadow-lg shadow-black/5"
             : "bg-transparent"
-        }`}
+        } ${mobileMenuOpen ? "md:block hidden" : ""}`}
       >
         {/* Gradient accent line */}
         <div

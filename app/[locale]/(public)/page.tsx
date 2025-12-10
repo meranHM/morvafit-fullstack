@@ -18,13 +18,13 @@ const FinalCTASection = dynamic(() => import("@/components/home/FinalCTASection"
 const Home = () => {
   return (
     <HomeWithLoader>
-      <main>
+      <main className="overflow-hidden flex flex-col">
         {/* Above the fold - load immediately */}
         <HeroSection />
         <ServicesSection className="py-16 md:py-24 lg:py-32" />
 
         {/* Below the fold - lazy load */}
-        <Suspense fallback={<div className="h-screen" />}>
+        <Suspense fallback={<div className="h-screen flex flex-col" />}>
           <MottoSection className="py-16 " />
           <UserForm className="py-16 md:py-24 lg:py-32" />
           <AboutSection className="py-16 md:py-24 lg:py-32" />
