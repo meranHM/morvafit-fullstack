@@ -16,8 +16,11 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { signIn } from "next-auth/react" // Import NextAuth's signIn function
+import { useRouter } from "next/navigation" // For redirecting after login
 
 const AuthPage = () => {
+  const router = useRouter() // Router for navigation
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -27,16 +30,95 @@ const AuthPage = () => {
     confirmPassword: "",
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("") // For showing error messages
+  const [success, setSuccess] = useState("") // For showing success messages
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("") // Clear previous errors
+    setSuccess("") // Clear previous success messages
 
-    // Simulate API call - will change later
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      if (isLogin) {
+        // ============================================
+        // LOGIN FLOW
+        // ============================================
+        // Use NextAuth's signIn function to log in
+        // This calls our configured authentication in lib/auth.ts
 
-    console.log("Form submitted:", formData)
-    setIsLoading(false)
+        const result = await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false, // Don't auto-redirect, we'll handle it manually
+        })
+
+        // Checking if login was successful
+        if (result?.error) {
+          // Login failed - show error message
+          setError(result.error)
+        } else {
+          // Login successful! Redirect to dashboard
+          setSuccess("Login successful! Redirecting...")
+          setTimeout(() => {
+            router.push("/dashboard") // Change this to your dashboard route
+          }, 1000)
+        }
+      } else {
+        // ============================================
+        // SIGN UP FLOW
+        // ============================================
+        // First, validate that passwords match
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match!")
+          setIsLoading(false)
+          return
+        }
+
+        // Call our registration API endpoint
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          // Registration failed - show error
+          setError(data.error || "Registration failed. Please try again.")
+        } else {
+          // Registration successful!
+          setSuccess("Account created successfully! Please sign in.")
+
+          // Clear form and switch to login mode
+          setFormData({
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          })
+
+          // Switch to login tab after 1.5 seconds
+          setTimeout(() => {
+            setIsLogin(true)
+            setSuccess("")
+          }, 1500)
+        }
+      }
+    } catch (error) {
+      // Handle any unexpected errors
+      console.error("Auth error:", error)
+      setError("An unexpected error occurred. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

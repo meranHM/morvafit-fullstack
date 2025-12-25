@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Datasource: This configures database connection
+// The DATABASE_URL comes from .env file
+datasource db {
+  provider = "postgresql"  // We're using PostgreSQL database
+  url      = env("DATABASE_URL")  // Connection string from environment variable
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+// This represents users in system (both regular users and admins)
+model User {
+  // Primary key - unique identifier for each user
+  id        String   @id @default(cuid())
+
+  // Authentication fields
+  email     String   @unique  // Email must be unique across all users
+  password  String              // Hashed password
+
+  // User profile information
+  name      String?             
+  phone     String?            
+
+  // Role-based access control
+  // "USER" = regular user, "ADMIN" = administrator
+  role      UserRole @default(USER)
+
+  // Account status
+  isBlocked Boolean  @default(false) 
+
+  // Email verification
+  emailVerified DateTime?  // Null until user verifies their email
+
+  // Timestamps
+  createdAt DateTime @default(now())  // Set once when user signs up
+  updatedAt DateTime @updatedAt       // Updates automatically on any change
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  // One user can have:
+  // - One body info form (optional)
+  // - Many receipts (payment uploads)
+  // - Many video assignments
+
+  bodyInfo         BodyInfo?          // One-to-one: User has one body info form
+  receipts         Receipt[]          // One-to-many: User can upload multiple receipts
+  videoAssignments VideoAssignment[]  // One-to-many: User can have multiple video assignments
+}
+
+// ============================================
+// USER ROLE ENUM
+// ============================================
+// Defines the two types of users in the system
+enum UserRole {
+  USER   // Regular users who sign up and use the service
+  ADMIN  // Administrators who manage users, receipts, and videos
+}
+
+// ============================================
+// BODY INFO MODEL
+// ============================================
+// Stores the form data users fill out (height, weight, goals, etc.)
+// This is used to calculate BMI and assign appropriate workout videos
+model BodyInfo {
+  id     String @id @default(cuid())
+  userId String @unique  // Each user can only have ONE body info form
+
+  // Physical measurements
+  height Float  // Height in centimeters 
+  weight Float  // Weight in kilograms 
+
+  // Calculated field - BMI
+  // Formula: weight (kg) / (height (m))²
+  bmi    Float  // We'll calculate this in code and store it
+
+  // Fitness goals
+  goal   FitnessGoal  // Weight loss, muscle gain, etc.
+
+  // Current fitness level
+  activityLevel ActivityLevel  // Sedentary, moderate, active, etc.
+
+  // Health information
+  healthConditions String?  // Optional: Any health issues or injuries
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // onDelete: if user is deleted, their body info is also deleted
+}
+
+// ============================================
+// FITNESS GOAL ENUM
+// ============================================
+enum FitnessGoal {
+  WEIGHT_LOSS      // User wants to lose weight
+  MUSCLE_GAIN      // User wants to build muscle
+  GENERAL_FITNESS  // User wants to stay healthy and fit
+  STRENGTH         // User wants to get stronger
+  ENDURANCE        // User wants to improve cardio/stamina
+}
+
+// ============================================
+// ACTIVITY LEVEL ENUM
+// ============================================
+enum ActivityLevel {
+  SEDENTARY  // Little to no exercise
+  LIGHT      // Light exercise 1-3 days/week
+  MODERATE   // Moderate exercise 3-5 days/week
+  ACTIVE     // Hard exercise 6-7 days/week
+  VERY_ACTIVE // Very hard exercise, physical job, or training twice a day
+}
+
+// ============================================
+// RECEIPT MODEL
+// ============================================
+// Stores payment receipts uploaded by users (offline payment system)
+// Admin reviews and approves these to grant access to videos
+model Receipt {
+  id     String @id @default(cuid())
+  userId String  // Which user uploaded this receipt
+
+  // Receipt file information
+  imageUrl String  // URL to the uploaded receipt image (stored in ArvanCloud S3)
+  amount   Float   // Payment amount in Tomans or other currencies
+
+  // Approval workflow
+  status   ReceiptStatus @default(PENDING)  // Starts as PENDING, admin can change it to APPROVED/REJECTED
+
+  // Admin review
+  reviewedBy   String?   // Optional: Which admin reviewed this receipt
+  reviewedAt   DateTime? // Optional: When was it reviewed
+  reviewNotes  String?   // Optional: Admin can add notes (e.g., reason for rejection)
+
+  // Timestamps
+  createdAt DateTime @default(now())  // When user uploaded the receipt
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// RECEIPT STATUS ENUM
+// ============================================
+enum ReceiptStatus {
+  PENDING   // Waiting for admin review
+  APPROVED  // Admin approved - user gets access to videos
+  REJECTED  // Admin rejected - payment was invalid or unclear
+}
+
+// ============================================
+// VIDEO MODEL
+// ============================================
+// Stores workout videos that can be assigned to users
+model Video {
+  id    String @id @default(cuid())
+
+  // Video information
+  title       String
+  description String?
+
+  // Video file
+  videoUrl    String  // URL to video file (stored in ArvanCloud S3)
+  thumbnailUrl String? // Optional: Preview image for the video
+
+  // Video duration in seconds (e.g., 1800 = 30 minutes)
+  duration    Int?
+
+  // Video categorization
+  level       VideoLevel      // Beginner, Intermediate, Advanced
+  category    VideoCategory   // Strength, Cardio, Flexibility, etc.
+
+  // BMI targeting - assign videos based on user's BMI
+  // For example: videos for overweight users (BMI > 25) vs normal weight
+  targetBmiMin Float?  // Minimum BMI for this video (null = no minimum)
+  targetBmiMax Float?  // Maximum BMI for this video (null = no maximum)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  assignments VideoAssignment[]  // One video can be assigned to many users
+}
+
+// ============================================
+// VIDEO LEVEL ENUM
+// ============================================
+enum VideoLevel {
+  BEGINNER     // Easy workouts for newcomers
+  INTERMEDIATE // Moderate difficulty
+  ADVANCED     // Hard workouts for experienced users
+}
+
+// ============================================
+// VIDEO CATEGORY ENUM
+// ============================================
+enum VideoCategory {
+  STRENGTH     // Weight training, resistance exercises
+  CARDIO       // Running, cycling, high intensity
+  FLEXIBILITY  // Stretching, yoga
+  HIIT         // High-Intensity Interval Training
+  CORE         // Ab and core workouts
+  FULL_BODY    // Complete body workouts
+}
+
+// ============================================
+// VIDEO ASSIGNMENT MODEL
+// ============================================
+// Links users to their assigned videos
+// When admin approves a receipt, they assign videos to the user based on their BMI
+model VideoAssignment {
+  id      String @id @default(cuid())
+  userId  String  // Which user is assigned this video
+  videoId String  // Which video is assigned
+
+  // Assignment information
+  assignedBy String?   // Optional: Which admin assigned this video
+  assignedAt DateTime @default(now())  // When was it assigned
+
+  // Viewing tracking
+  viewedAt   DateTime? // Null until user watches the video
+  completed  Boolean @default(false)  // Has user finished watching?
+
+  // Notes from admin
+  notes      String?   // Optional: Special instructions for this user
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // UNIQUE CONSTRAINT
+  // ============================================
+  // Prevent assigning the same video to the same user twice
+  @@unique([userId, videoId])
+}
