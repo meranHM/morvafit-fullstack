@@ -79,41 +79,48 @@ type DashboardUser = {
 }
 
 type BodyInfoData = {
+  age: number
+  gender: string
   height: number
   weight: number
+  targetWeight: number
   bmi: number
-  goal: string
+  primaryGoal: string
   activityLevel: string
-  healthConditions: string | null
+  experienceLevel: string
+  workoutDays: string[]
+  preferredTime: string
+  sessionDuration: string
+  dietaryPreference: string
+  medicalConditions: string | null
   updatedAt: Date
+}
+
+// HELPER FUNCTION: Format enum values for display
+// Converts "WEIGHT_LOSS" -> "Weight Loss"
+function formatEnumValue(value: string): string {
+  return value
+    .split("_")
+    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ")
 }
 
 // HELPER FUNCTION: Format Body Info for Display
 function formatBodyInfo(bodyInfo: BodyInfoData | null): HealthData | null {
   if (!bodyInfo) return null
 
-  // Format goal: "WEIGHT_LOSS" -> "Weight Loss"
-  const formatGoal = (goal: string) => {
-    return goal
-      .split("_")
-      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(" ")
-  }
-
-  // Format activity level: "MODERATE" -> "Moderate"
-  const formatActivityLevel = (level: string) => {
-    return level.charAt(0) + level.slice(1).toLowerCase()
-  }
+  // Format workout days: ["MON", "WED", "FRI"] -> "3 days/week"
+  const workoutFrequency = `${bodyInfo.workoutDays.length} days/week`
 
   return {
     height: `${bodyInfo.height} cm`,
     weight: `${bodyInfo.weight} kg`,
-    age: "N/A", // We don't have age in body info yet
-    goal: formatGoal(bodyInfo.goal),
-    fitnessLevel: formatActivityLevel(bodyInfo.activityLevel),
-    medicalConditions: bodyInfo.healthConditions || "None",
-    dietaryPreferences: "N/A", // We don't track this yet
-    workoutFrequency: "N/A", // We don't track this yet
+    age: `${bodyInfo.age} years`,
+    goal: formatEnumValue(bodyInfo.primaryGoal),
+    fitnessLevel: formatEnumValue(bodyInfo.activityLevel),
+    medicalConditions: bodyInfo.medicalConditions || "None",
+    dietaryPreferences: formatEnumValue(bodyInfo.dietaryPreference),
+    workoutFrequency: workoutFrequency,
     lastUpdated: new Date(bodyInfo.updatedAt).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",

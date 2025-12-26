@@ -23,12 +23,20 @@ export default async function DashboardPage() {
       // Including body info if it exists (one-to-one relationship)
       bodyInfo: {
         select: {
+          age: true,
+          gender: true,
           height: true,
           weight: true,
+          targetWeight: true,
           bmi: true,
-          goal: true,
+          primaryGoal: true,
           activityLevel: true,
-          healthConditions: true,
+          experienceLevel: true,
+          workoutDays: true,
+          preferredTime: true,
+          sessionDuration: true,
+          dietaryPreference: true,
+          medicalConditions: true,
           updatedAt: true,
         },
       },
@@ -50,12 +58,20 @@ export default async function DashboardPage() {
   // STEP 4: Preparing body info data (if it exists)
   const bodyInfo = user.bodyInfo
     ? {
+        age: user.bodyInfo.age,
+        gender: user.bodyInfo.gender,
         height: user.bodyInfo.height,
         weight: user.bodyInfo.weight,
+        targetWeight: user.bodyInfo.targetWeight,
         bmi: user.bodyInfo.bmi,
-        goal: user.bodyInfo.goal,
+        primaryGoal: user.bodyInfo.primaryGoal,
         activityLevel: user.bodyInfo.activityLevel,
-        healthConditions: user.bodyInfo.healthConditions,
+        experienceLevel: user.bodyInfo.experienceLevel,
+        workoutDays: user.bodyInfo.workoutDays,
+        preferredTime: user.bodyInfo.preferredTime,
+        sessionDuration: user.bodyInfo.sessionDuration,
+        dietaryPreference: user.bodyInfo.dietaryPreference,
+        medicalConditions: user.bodyInfo.medicalConditions,
         updatedAt: user.bodyInfo.updatedAt,
       }
     : null

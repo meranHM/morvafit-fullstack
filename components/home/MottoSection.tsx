@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef } from "react"
 import MiniTitle from "../ui/MiniTitle"
 import Image from "next/image"

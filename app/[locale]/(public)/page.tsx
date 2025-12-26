@@ -1,5 +1,3 @@
-"use client"
-
 import dynamic from "next/dynamic"
 import { Suspense } from "react"
 import HeroSection from "@/components/home/HeroSection"
@@ -11,7 +9,7 @@ const AboutSection = dynamic(() => import("@/components/home/AboutSection"))
 const MottoSection = dynamic(() => import("@/components/home/MottoSection"))
 const TestimonialsSection = dynamic(() => import("@/components/home/TestimonialsSection"))
 const TransformationsSection = dynamic(() => import("@/components/home/TransformationsSection"))
-const UserForm = dynamic(() => import("@/components/home/UserForm"))
+const UserBodyInfoForm = dynamic(() => import("@/components/home/UserBodyInfoForm"))
 const FAQSection = dynamic(() => import("@/components/home/FAQSection"))
 const FinalCTASection = dynamic(() => import("@/components/home/FinalCTASection"))
 
@@ -26,7 +24,7 @@ const Home = () => {
         {/* Below the fold - lazy load */}
         <Suspense fallback={<div className="h-screen flex flex-col" />}>
           <MottoSection className="py-16 " />
-          <UserForm className="py-16 md:py-24 lg:py-32" />
+          <UserBodyInfoForm />
           <AboutSection className="py-16 md:py-24 lg:py-32" />
           <TestimonialsSection className="py-16 md:py-24 lg:py-32" />
           {/* <TransformationsSection className="py-16 md:py-24 lg:py-32" /> */}

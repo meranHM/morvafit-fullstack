@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react"
+"use client"
+
 import MiniTitle from "../ui/MiniTitle"
 import ScrollReveal from "../ScrollReveal"
 import { gsap } from "gsap"
@@ -11,37 +12,12 @@ interface AboutSectionProps {
 }
 
 const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
-  /* const videoWrapperRef = useRef<HTMLDivElement>(null)
-  const textWrapperRef = useRef<HTMLDivElement>(null) */
-
-  /* useEffect(() => {
-    if (!videoWrapperRef.current || !textWrapperRef.current) return
-
-    const videoEl = videoWrapperRef.current
-    const columnEl = videoEl.parentElement
-    const textEl = textWrapperRef.current
-    const headerOffset = 120
-
-    ScrollTrigger.create({
-      trigger: textEl,
-      start: `top top+=${headerOffset}`,
-      end: "60% center",
-      pin: columnEl,
-      pinSpacing: true,
-      scrub: true,
-    })
-
-    return () => ScrollTrigger.getAll().forEach(t => t.kill())
-  }, []) */
-
   return (
     <div className={`container mx-auto ${className}`}>
       <div className="w-full max-w-7xl flex p-4 mx-auto">
         <div className="grid grid-cols-12 gap-4">
           {/* Text */}
-          <div
-            /* ref={textWrapperRef} */ className="col-span-12 md:col-span-8 flex flex-col p-6 items-start"
-          >
+          <div className="col-span-12 md:col-span-8 flex flex-col p-6 items-start">
             <MiniTitle text="About me" />
             <ScrollReveal baseOpacity={1} enableBlur={true} baseRotation={3} blurStrength={3}>
               I'm Morvarid Haji, a Fitness & Pilates expert, certified health coach, and dancer.
@@ -59,10 +35,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
 
           {/* Video */}
           <div className="col-span-12 md:col-span-4 relative">
-            <div
-              /* ref={videoWrapperRef} */
-              className="w-full h-auto aspect-4/5 md:aspect-3/5 rounded-xl overflow-hidden relative"
-            >
+            <div className="w-full h-auto aspect-4/5 md:aspect-3/5 rounded-xl overflow-hidden relative">
               <div className="relative w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-center">
                 <video
                   className="object-cover w-full h-full"

@@ -32,7 +32,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name = "User", plan }
               </div>
               <div className="relative group cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-                  SJ
+                  {name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
               </div>

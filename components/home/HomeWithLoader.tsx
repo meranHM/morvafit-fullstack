@@ -1,3 +1,5 @@
+"use client"
+
 import { useFirstTimeLoader, LoadingAnimation } from "../LoadingAnimation"
 import { AnimatePresence, motion } from "framer-motion"
 

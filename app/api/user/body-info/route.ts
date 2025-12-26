@@ -1,7 +1,7 @@
 // ============================================
 // BODY INFO API ENDPOINT
 // ============================================
-// This endpoint manages user's body information (height, weight, BMI, fitness goals)
+// This endpoint manages user's body information
 // GET - Fetch user's body info
 // POST - Create or update body info
 
@@ -9,6 +9,116 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import {
+  Gender,
+  PrimaryGoal,
+  ActivityLevel,
+  ExperienceLevel,
+  WorkoutDays,
+  PreferredTime,
+  SessionDurations,
+  DietaryPreference,
+} from "@prisma/client"
+
+// ============================================
+// ENUM MAPPING HELPERS
+// ============================================
+// These functions convert form values to database enum values
+// Form uses user-friendly strings, database uses SCREAMING_CASE enums
+
+// Maps gender from form ("male", "female") to database enum
+function mapGender(value: string): Gender {
+  const mapping: Record<string, Gender> = {
+    male: Gender.MALE,
+    female: Gender.FEMALE,
+  }
+  return mapping[value.toLowerCase()] || Gender.MALE
+}
+
+// Maps primary goal from form ("Weight Loss") to database enum
+function mapPrimaryGoal(value: string): PrimaryGoal {
+  const mapping: Record<string, PrimaryGoal> = {
+    "weight loss": PrimaryGoal.WEIGHT_LOSS,
+    "muscle gain": PrimaryGoal.MUSCLE_GAIN,
+    endurance: PrimaryGoal.ENDURANCE,
+    "general fitness": PrimaryGoal.GENERAL_FITNESS,
+    "athletic performance": PrimaryGoal.STRENGTH,
+    flexibility: PrimaryGoal.GENERAL_FITNESS,
+  }
+  return mapping[value.toLowerCase()] || PrimaryGoal.GENERAL_FITNESS
+}
+
+// Maps activity level from form ("sedentary") to database enum
+function mapActivityLevel(value: string): ActivityLevel {
+  const mapping: Record<string, ActivityLevel> = {
+    sedentary: ActivityLevel.SEDENTARY,
+    light: ActivityLevel.LIGHT,
+    moderate: ActivityLevel.MODERATE,
+    very: ActivityLevel.ACTIVE,
+    extra: ActivityLevel.VERY_ACTIVE,
+  }
+  return mapping[value.toLowerCase()] || ActivityLevel.MODERATE
+}
+
+// Maps experience level from form ("Beginner") to database enum
+function mapExperienceLevel(value: string): ExperienceLevel {
+  const mapping: Record<string, ExperienceLevel> = {
+    beginner: ExperienceLevel.BEGINNER,
+    intermediate: ExperienceLevel.INTERMEDIATE,
+    advanced: ExperienceLevel.ADVANCED,
+  }
+  return mapping[value.toLowerCase()] || ExperienceLevel.BEGINNER
+}
+
+// Maps workout days from form (["Mon", "Tue"]) to database enums
+function mapWorkoutDays(days: string[]): WorkoutDays[] {
+  const mapping: Record<string, WorkoutDays> = {
+    mon: WorkoutDays.MON,
+    tue: WorkoutDays.TUE,
+    wed: WorkoutDays.WED,
+    thu: WorkoutDays.THU,
+    fri: WorkoutDays.FRI,
+    sat: WorkoutDays.SAT,
+    sun: WorkoutDays.SUN,
+  }
+  return days.map(day => mapping[day.toLowerCase()] || WorkoutDays.MON)
+}
+
+// Maps preferred time from form ("Morning (6-11am)") to database enum
+function mapPreferredTime(value: string): PreferredTime {
+  // Extract the time of day from strings like "Morning (6-11am)"
+  const timeOfDay = value.toLowerCase().split(" ")[0]
+  const mapping: Record<string, PreferredTime> = {
+    morning: PreferredTime.MORNING,
+    afternoon: PreferredTime.AFTERNOON,
+    evening: PreferredTime.EVENING,
+  }
+  return mapping[timeOfDay] || PreferredTime.MORNING
+}
+
+// Maps session duration from form ("30 min") to database enum
+function mapSessionDuration(value: string): SessionDurations {
+  const mapping: Record<string, SessionDurations> = {
+    "30 min": SessionDurations.MIN_30,
+    "45 min": SessionDurations.MIN_45,
+    "60 min": SessionDurations.MIN_60,
+    "90 min": SessionDurations.MIN_90,
+  }
+  return mapping[value] || SessionDurations.MIN_45
+}
+
+// Maps dietary preference from form ("No Restrictions") to database enum
+function mapDietaryPreference(value: string): DietaryPreference {
+  const mapping: Record<string, DietaryPreference> = {
+    "no restrictions": DietaryPreference.NO_RESTRICTIONS,
+    vegetarian: DietaryPreference.VEGETARIAN,
+    vegan: DietaryPreference.VEGAN,
+    keto: DietaryPreference.KETO,
+    paleo: DietaryPreference.PALEO,
+    mediterranean: DietaryPreference.MEDITERRANEAN,
+  }
+  return mapping[value.toLowerCase()] || DietaryPreference.NO_RESTRICTIONS
+}
 
 // ============================================
 // HELPER FUNCTION: Calculating BMI
@@ -50,14 +160,27 @@ export async function GET() {
       where: {
         userId: session.user.id,
       },
+      // Selecting all fields we need
       select: {
         id: true,
+        age: true,
+        gender: true,
         height: true,
         weight: true,
-        bmi: true,
-        goal: true,
+        targetWeight: true,
+        primaryGoal: true,
         activityLevel: true,
-        healthConditions: true,
+        experienceLevel: true,
+        workoutDays: true,
+        preferredTime: true,
+        sessionDuration: true,
+        dietaryPreference: true,
+        allergies: true,
+        medicalConditions: true,
+        injuries: true,
+        motivation: true,
+        challenges: true,
+        bmi: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -115,16 +238,67 @@ export async function POST(request: Request) {
     // STEP 2: Getting data from request body
     // ============================================
     const body = await request.json()
-    const { height, weight, goal, activityLevel, healthConditions } = body
+
+    // Destructuring all fields from the form
+    const {
+      age,
+      gender,
+      height,
+      weight,
+      targetWeight,
+      primaryGoal,
+      activityLevel,
+      experienceLevel,
+      workoutDays,
+      preferredTime,
+      sessionDuration,
+      dietaryPreference,
+      allergies,
+      medicalConditions,
+      injuries,
+      motivation,
+      challenges,
+    } = body
 
     // ============================================
     // STEP 3: Validating required fields
     // ============================================
-    if (!height || !weight || !goal || !activityLevel) {
+    // List of required fields - these must all have values
+    const requiredFields = [
+      "age",
+      "gender",
+      "height",
+      "weight",
+      "targetWeight",
+      "primaryGoal",
+      "activityLevel",
+      "experienceLevel",
+      "workoutDays",
+      "preferredTime",
+      "sessionDuration",
+      "dietaryPreference",
+      "motivation",
+    ]
+
+    // Check each required field
+    const missingFields: string[] = []
+    for (const field of requiredFields) {
+      const value = body[field]
+      // workoutDays is an array, so check length
+      if (field === "workoutDays") {
+        if (!Array.isArray(value) || value.length === 0) {
+          missingFields.push(field)
+        }
+      } else if (!value || value.toString().trim() === "") {
+        missingFields.push(field)
+      }
+    }
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
         {
           error: "Missing required fields",
-          required: ["height", "weight", "goal", "activityLevel"],
+          missingFields,
         },
         { status: 400 }
       )
@@ -133,8 +307,19 @@ export async function POST(request: Request) {
     // ============================================
     // STEP 4: Validating data types and ranges
     // ============================================
+    // Convert string values to numbers
+    const ageNum = parseInt(age, 10)
+    const heightNum = parseFloat(height)
+    const weightNum = parseFloat(weight)
+    const targetWeightNum = parseFloat(targetWeight)
+
+    // Age should be between 13 and 100
+    if (isNaN(ageNum) || ageNum < 13 || ageNum > 100) {
+      return NextResponse.json({ error: "Age must be between 13 and 100" }, { status: 400 })
+    }
+
     // Height should be between 100cm and 250cm
-    if (typeof height !== "number" || height < 100 || height > 250) {
+    if (isNaN(heightNum) || heightNum < 100 || heightNum > 250) {
       return NextResponse.json(
         { error: "Height must be a number between 100 and 250 cm" },
         { status: 400 }
@@ -142,69 +327,76 @@ export async function POST(request: Request) {
     }
 
     // Weight should be between 30kg and 300kg
-    if (typeof weight !== "number" || weight < 30 || weight > 300) {
+    if (isNaN(weightNum) || weightNum < 30 || weightNum > 300) {
       return NextResponse.json(
         { error: "Weight must be a number between 30 and 300 kg" },
         { status: 400 }
       )
     }
 
-    // Validating goal enum
-    const validGoals = ["WEIGHT_LOSS", "MUSCLE_GAIN", "GENERAL_FITNESS", "STRENGTH", "ENDURANCE"]
-    if (!validGoals.includes(goal)) {
+    // Target weight should be between 30kg and 300kg
+    if (isNaN(targetWeightNum) || targetWeightNum < 30 || targetWeightNum > 300) {
       return NextResponse.json(
-        { error: "Invalid goal. Must be one of: " + validGoals.join(", ") },
-        { status: 400 }
-      )
-    }
-
-    // Validating activity level enum
-    const validActivityLevels = ["SEDENTARY", "LIGHT", "MODERATE", "ACTIVE", "VERY_ACTIVE"]
-    if (!validActivityLevels.includes(activityLevel)) {
-      return NextResponse.json(
-        { error: "Invalid activity level. Must be one of: " + validActivityLevels.join(", ") },
+        { error: "Target weight must be a number between 30 and 300 kg" },
         { status: 400 }
       )
     }
 
     // ============================================
-    // STEP 5: Calculating BMI
+    // STEP 5: Mapping form values to database enums
     // ============================================
-    const bmi = calculateBMI(weight, height)
+    // Convert user-friendly form values to database enum values
+    const mappedData = {
+      age: ageNum,
+      gender: mapGender(gender),
+      height: heightNum,
+      weight: weightNum,
+      targetWeight: targetWeightNum,
+      primaryGoal: mapPrimaryGoal(primaryGoal),
+      activityLevel: mapActivityLevel(activityLevel),
+      experienceLevel: mapExperienceLevel(experienceLevel),
+      workoutDays: mapWorkoutDays(workoutDays),
+      preferredTime: mapPreferredTime(preferredTime),
+      sessionDuration: mapSessionDuration(sessionDuration),
+      dietaryPreference: mapDietaryPreference(dietaryPreference),
+      // Optional string fields - use null if empty
+      allergies: allergies?.trim() || null,
+      medicalConditions: medicalConditions?.trim() || null,
+      injuries: injuries?.trim() || null,
+      motivation: motivation.trim(),
+      challenges: challenges?.trim() || null,
+    }
 
     // ============================================
-    // STEP 6: Creating or update body info
+    // STEP 6: Calculating BMI
+    // ============================================
+    const bmi = calculateBMI(weightNum, heightNum)
+
+    // ============================================
+    // STEP 7: Creating or updating body info in database
     // ============================================
     // Using upsert: if body info exists, update it; otherwise, create a new one
     const bodyInfo = await prisma.bodyInfo.upsert({
       where: {
         userId: session.user.id,
       },
-      // If body info exists, update these fields
+      // If body info exists, update with new values
       update: {
-        height,
-        weight,
+        ...mappedData,
         bmi,
-        goal,
-        activityLevel,
-        healthConditions: healthConditions || null,
         // updatedAt will be set automatically by Prisma
       },
       // If body info doesn't exist, create with these fields
       create: {
         userId: session.user.id,
-        height,
-        weight,
+        ...mappedData,
         bmi,
-        goal,
-        activityLevel,
-        healthConditions: healthConditions || null,
         // createdAt and updatedAt will be set automatically
       },
     })
 
     // ============================================
-    // STEP 7: Returning success response
+    // STEP 8: Returning success response
     // ============================================
     return NextResponse.json(
       {
@@ -212,12 +404,19 @@ export async function POST(request: Request) {
         message: "Body info saved successfully!",
         data: {
           id: bodyInfo.id,
+          age: bodyInfo.age,
+          gender: bodyInfo.gender,
           height: bodyInfo.height,
           weight: bodyInfo.weight,
+          targetWeight: bodyInfo.targetWeight,
           bmi: bodyInfo.bmi,
-          goal: bodyInfo.goal,
+          primaryGoal: bodyInfo.primaryGoal,
           activityLevel: bodyInfo.activityLevel,
-          healthConditions: bodyInfo.healthConditions,
+          experienceLevel: bodyInfo.experienceLevel,
+          workoutDays: bodyInfo.workoutDays,
+          preferredTime: bodyInfo.preferredTime,
+          sessionDuration: bodyInfo.sessionDuration,
+          dietaryPreference: bodyInfo.dietaryPreference,
           updatedAt: bodyInfo.updatedAt,
         },
       },
@@ -247,17 +446,29 @@ export async function POST(request: Request) {
 // GET - Fetch body info:
 // GET /api/user/body-info
 // Headers: Cookie with session token (automatic from NextAuth)
-// Response: { success: true, data: { height, weight, bmi, ... } }
+// Response: { success: true, data: { age, gender, height, weight, bmi, ... } }
 //
 // POST - Create/Update body info:
 // POST /api/user/body-info
 // Headers: Cookie with session token (automatic from NextAuth)
 // Body: {
-//   "height": 175,           // in cm (required)
-//   "weight": 70,            // in kg (required)
-//   "goal": "WEIGHT_LOSS",   // required
-//   "activityLevel": "MODERATE", // required
-//   "healthConditions": "None" // optional
+//   "age": "25",                        // required
+//   "gender": "male",                   // required
+//   "height": "175",                    // in cm (required)
+//   "weight": "70",                     // in kg (required)
+//   "targetWeight": "65",               // in kg (required)
+//   "primaryGoal": "Weight Loss",       // required
+//   "activityLevel": "moderate",        // required
+//   "experienceLevel": "Beginner",      // required
+//   "workoutDays": ["Mon", "Wed", "Fri"], // required, at least one
+//   "preferredTime": "Morning (6-11am)", // required
+//   "sessionDuration": "45 min",        // required
+//   "dietaryPreference": "No Restrictions", // required
+//   "motivation": "Get healthier",      // required
+//   "allergies": "None",                // optional
+//   "medicalConditions": "",            // optional
+//   "injuries": "",                     // optional
+//   "challenges": ""                    // optional
 // }
 // Response: { success: true, message: "Body info saved!", data: {...} }
 //

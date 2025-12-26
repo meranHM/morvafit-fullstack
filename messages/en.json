@@ -4,6 +4,7 @@
     "description": "Move with confidence and train with intention. Morvarid guides you through empowering workouts designed to build strength, mobility, and a beautifully balanced body. Your transformation starts here.",
     "CTA": "Start Today"
   },
+
   "MottoSection": {
     "brief": "Morvafit was built from years of hands-on coaching, movement training, and a passion for empowering women. From Pilates foundations to strength and mobility work, every program is designed to help you move better, feel stronger, and build lasting confidence.",
     "miniTitle": "The Morvafit Method",
@@ -17,22 +18,27 @@
     "provenMethodology": "Proven Methodology",
     "provenMethodologyDesc": "Pilates principles, strength training, dance-inspired conditioning, and mobility work come together for a balanced, sustainable transformation."
   },
+
   "ServicesSection": {
     "title": "Use the most modern approaches and techniques",
     "miniTitle": "Plans"
   },
+
   "UserForm": {
     "title": "Your Fitness Assessment",
     "description": "Help us create your personalized training plan",
+
     "authGate": {
       "title": "Start Your Fitness Journey",
       "description": "Please sign in or create an account to access your personalize fitness assessment form.",
       "CTA": "Sign In / Sign Up"
     },
+
     "successState": {
       "title": "Assessment Complete!",
       "description": "Your personalized fitness plan is being prepared..."
     },
+
     "form": {
       "age": "Age",
       "gender": "Gender",
@@ -81,8 +87,34 @@
         "sessionDuration": "Session Duration",
         "diet": "Diet"
       }
+    },
+
+    "bmi": {
+      "underweight": "Underweight",
+      "normal": "Normal",
+      "overweight": "Overweight",
+      "obese": "Obese"
+    },
+
+    "goals": {
+      "weightLoss": "Weight Loss",
+      "muscleGain": "Muscle Gain",
+      "generalFitness": "General Fitness",
+      "strength": "Strength",
+      "endurance": "Endurance"
+    },
+
+    "alreadySubmitted": {
+      "title": "Assessment Complete!",
+      "description": "Your fitness assessment has been submitted. Here's a summary of your profile:",
+      "goal": "Goal",
+      "weight": "Weight",
+      "height": "Height",
+      "nextSteps": "Your personalized fitness plan is being prepared. Check your dashboard for updates.",
+      "CTA": "Go to Dashboard"
     }
   },
+
   "Navbar": {
     "home": "Home",
     "about": "About",
@@ -90,6 +122,7 @@
     "blog": "Blog",
     "contact": "Contact"
   },
+
   "Footer": {
     "about": "About Us",
     "services": "Services",

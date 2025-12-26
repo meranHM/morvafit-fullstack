@@ -70,22 +70,53 @@ model BodyInfo {
   id     String @id @default(cuid())
   userId String @unique  // Each user can only have ONE body info form
 
+  age Int
+  gender Gender
+
   // Physical measurements
   height Float  // Height in centimeters 
   weight Float  // Weight in kilograms 
-
-  // Calculated field - BMI
-  // Formula: weight (kg) / (height (m))²
-  bmi    Float  // We'll calculate this in code and store it
+  targetWeight Float
 
   // Fitness goals
-  goal   FitnessGoal  // Weight loss, muscle gain, etc.
+  primaryGoal   PrimaryGoal  // Weight loss, muscle gain, etc.
 
   // Current fitness level
   activityLevel ActivityLevel  // Sedentary, moderate, active, etc.
 
+  // Exercise experience level
+  experienceLevel ExperienceLevel
+
+  // Days user can workout
+  workoutDays WorkoutDays[] // User can select more than one day
+ 
+  // User's preferred time of day
+  preferredTime PreferredTime
+
+  // User's preferred session durations
+  sessionDuration SessionDurations
+
+  // User's diatery restrictions
+  dietaryPreference DietaryPreference
+
+  // User's food allergies
+  allergies String? // Optional: (Nuts, dairy, Gluten, etc.)
+
   // Health information
-  healthConditions String?  // Optional: Any health issues or injuries
+  medicalConditions String?  // Optional: Any health issues
+
+  // User's current injuries
+  injuries String? // Optional: Any inuries or physical limitations
+
+  // What motivates user
+  motivation String
+
+  // User's Challenges
+  challenges String? // Optional
+
+  // Calculated field - BMI
+  // Formula: weight (kg) / (height (m))²
+  bmi    Float  // We'll calculate this in code and store it
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -99,9 +130,17 @@ model BodyInfo {
 }
 
 // ============================================
-// FITNESS GOAL ENUM
+// GENDER ENUM
 // ============================================
-enum FitnessGoal {
+enum Gender {
+  MALE
+  FEMALE
+}
+
+// ============================================
+// PRIMARY GOAL ENUM
+// ============================================
+enum PrimaryGoal {
   WEIGHT_LOSS      // User wants to lose weight
   MUSCLE_GAIN      // User wants to build muscle
   GENERAL_FITNESS  // User wants to stay healthy and fit
@@ -118,6 +157,59 @@ enum ActivityLevel {
   MODERATE   // Moderate exercise 3-5 days/week
   ACTIVE     // Hard exercise 6-7 days/week
   VERY_ACTIVE // Very hard exercise, physical job, or training twice a day
+}
+
+// ============================================
+// EXPERIENCE LEVEL ENUM
+// ============================================
+enum ExperienceLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// ============================================
+// WORKOUT DAYS ENUM
+// ============================================
+enum WorkoutDays {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+// ============================================
+// PREFERRED TIME ENUM
+// ============================================
+enum PreferredTime {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+// ============================================
+// PREFERRED TIME ENUM
+// ============================================
+enum SessionDurations {
+  MIN_30
+  MIN_45
+  MIN_60
+  MIN_90
+}
+
+// ============================================
+// DIET ENUM
+// ============================================
+enum DietaryPreference {
+  NO_RESTRICTIONS
+  VEGETARIAN
+  VEGAN
+  KETO
+  PALEO
+  MEDITERRANEAN
 }
 
 // ============================================

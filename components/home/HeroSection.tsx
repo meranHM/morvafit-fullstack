@@ -1,3 +1,5 @@
+"use client"
+
 import LightRays from "@/components/LightRays"
 import { useTranslations } from "next-intl"
 
