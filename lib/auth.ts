@@ -147,9 +147,6 @@ export const authOptions: NextAuthOptions = {
   // OTHER OPTIONS
   // ============================================
 
-  // Enabling debug mode in development to see detailed logs
-  debug: process.env.NODE_ENV === "development",
-
   // Secret key for signing tokens (from .env file)
   secret: process.env.NEXTAUTH_SECRET,
 }

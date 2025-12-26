@@ -1,5 +1,6 @@
 "use client"
 
+import type { HealthData } from "@/types/bodyInfo"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import {
@@ -46,18 +47,6 @@ interface PaymentType {
   receiptUrl: string
 }
 
-interface HealthDataType {
-  height: string
-  weight: string
-  age: string
-  goal: string
-  fitnessLevel: string
-  medicalConditions: string
-  dietaryPreferences: string
-  workoutFrequency: string
-  lastUpdated: string
-}
-
 interface MainSectionProps {
   memberSince: string
   nextPayment: string
@@ -66,7 +55,7 @@ interface MainSectionProps {
   phone: string
   videos: VideoType[]
   payments: PaymentType[]
-  healthData: HealthDataType
+  healthData: HealthData | null
 }
 
 const MainSection: React.FC<MainSectionProps> = ({
@@ -114,6 +103,20 @@ const MainSection: React.FC<MainSectionProps> = ({
     await new Promise(resolve => setTimeout(resolve, 2000))
     setUploadingReceipt(false)
     alert("Receipt uploaded successfully! Awaiting admin approval.")
+  }
+
+  if (!healthData) {
+    return (
+      <div className="bg-white/80 rounded-2xl p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900">Health Profile Incomplete</h3>
+        <p className="text-gray-600 mt-2">
+          Add your body information to personalize your workouts.
+        </p>
+        <button className="mt-4 px-5 py-2 rounded-xl bg-rose-500 text-white">
+          Complete Profile
+        </button>
+      </div>
+    )
   }
 
   return (

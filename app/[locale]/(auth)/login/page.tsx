@@ -36,8 +36,8 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setError("") // Clear previous errors
-    setSuccess("") // Clear previous success messages
+    setError("")
+    setSuccess("")
 
     try {
       if (isLogin) {

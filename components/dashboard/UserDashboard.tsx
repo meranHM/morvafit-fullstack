@@ -1,5 +1,6 @@
 import DashboardHeader from "@/components/dashboard/Header"
 import MainSection from "@/components/dashboard/MainSection"
+import type { HealthData } from "@/types/bodyInfo"
 
 // Mock data
 const mockUser = {
@@ -69,18 +70,7 @@ const mockPayments = [
   },
 ]
 
-const mockHealthData = {
-  height: "165 cm",
-  weight: "60 kg",
-  age: "28",
-  goal: "Weight Loss & Toning",
-  fitnessLevel: "Intermediate",
-  medicalConditions: "None",
-  dietaryPreferences: "Vegetarian",
-  workoutFrequency: "4-5 times per week",
-  lastUpdated: "Jan 15, 2024",
-}
-
+// TYPE DEFINITIONS
 type DashboardUser = {
   name: string
   email: string
@@ -88,7 +78,59 @@ type DashboardUser = {
   createdAt: Date
 }
 
-const UserDashboard = ({ user }: { user: DashboardUser }) => {
+type BodyInfoData = {
+  height: number
+  weight: number
+  bmi: number
+  goal: string
+  activityLevel: string
+  healthConditions: string | null
+  updatedAt: Date
+}
+
+// HELPER FUNCTION: Format Body Info for Display
+function formatBodyInfo(bodyInfo: BodyInfoData | null): HealthData | null {
+  if (!bodyInfo) return null
+
+  // Format goal: "WEIGHT_LOSS" -> "Weight Loss"
+  const formatGoal = (goal: string) => {
+    return goal
+      .split("_")
+      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ")
+  }
+
+  // Format activity level: "MODERATE" -> "Moderate"
+  const formatActivityLevel = (level: string) => {
+    return level.charAt(0) + level.slice(1).toLowerCase()
+  }
+
+  return {
+    height: `${bodyInfo.height} cm`,
+    weight: `${bodyInfo.weight} kg`,
+    age: "N/A", // We don't have age in body info yet
+    goal: formatGoal(bodyInfo.goal),
+    fitnessLevel: formatActivityLevel(bodyInfo.activityLevel),
+    medicalConditions: bodyInfo.healthConditions || "None",
+    dietaryPreferences: "N/A", // We don't track this yet
+    workoutFrequency: "N/A", // We don't track this yet
+    lastUpdated: new Date(bodyInfo.updatedAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }),
+  }
+}
+
+const UserDashboard = ({
+  user,
+  bodyInfo,
+}: {
+  user: DashboardUser
+  bodyInfo: BodyInfoData | null
+}) => {
+  const healthData = formatBodyInfo(bodyInfo)
+
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-rose-50/30">
       <DashboardHeader name={user.name} plan={mockUser.planStatus} />
@@ -101,7 +143,7 @@ const UserDashboard = ({ user }: { user: DashboardUser }) => {
         phone={user.phone}
         videos={mockVideos}
         payments={mockPayments}
-        healthData={mockHealthData}
+        healthData={healthData}
       />
     </div>
   )
