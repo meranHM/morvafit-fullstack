@@ -2,7 +2,6 @@
 // USER REGISTRATION API ENDPOINT
 // ============================================
 // This endpoint allows new users to create an account
-// POST /api/auth/register
 
 import { NextResponse } from "next/server"
 import { hash } from "bcryptjs"

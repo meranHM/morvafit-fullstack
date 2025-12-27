@@ -5,14 +5,13 @@ import { authOptions } from "@/lib/auth"
 import UserDashboard from "@/components/dashboard/UserDashboard"
 
 export default async function DashboardPage() {
-  // STEP 1: Checking if user is authenticated
   const session = await getServerSession(authOptions)
 
   if (!session?.user.id) {
     redirect("login")
   }
 
-  // STEP 2: Fetching user data from database
+  // Fetching user data from database
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -47,7 +46,7 @@ export default async function DashboardPage() {
     redirect("login")
   }
 
-  // STEP 3: Preparing safe user data for client component
+  // Preparing safe user data for client component
   const safeUser = {
     name: user.name ?? "Anonymous",
     email: user.email ?? "",
@@ -55,7 +54,7 @@ export default async function DashboardPage() {
     createdAt: user.createdAt,
   }
 
-  // STEP 4: Preparing body info data (if it exists)
+  // Preparing body info data (if it exists)
   const bodyInfo = user.bodyInfo
     ? {
         age: user.bodyInfo.age,

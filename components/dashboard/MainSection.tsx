@@ -25,6 +25,7 @@ import {
   Camera,
   Lock,
 } from "lucide-react"
+import PaymentTab from "./PaymentTab"
 
 type TabType = "overview" | "videos" | "payments" | "health" | "account" | "progress"
 
@@ -94,16 +95,6 @@ const MainSection: React.FC<MainSectionProps> = ({
       color: "from-green-500 to-emerald-500",
     },
   ]
-
-  const handleUploadReceipt = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return
-
-    setUploadingReceipt(true)
-    // Simulate upload
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setUploadingReceipt(false)
-    alert("Receipt uploaded successfully! Awaiting admin approval.")
-  }
 
   return (
     <>
@@ -344,87 +335,7 @@ const MainSection: React.FC<MainSectionProps> = ({
                 )}
 
                 {/* Payments Tab */}
-                {activeTab === "payments" && (
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-3xl font-bold text-gray-900">Payments</h2>
-                      <p className="text-gray-600 mt-1">
-                        Manage your payment history and upload receipts
-                      </p>
-                    </div>
-
-                    {/* Upload Receipt */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Upload Payment Receipt
-                      </h3>
-                      <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-rose-400 transition-colors">
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            accept="image/*,.pdf"
-                            onChange={handleUploadReceipt}
-                            className="hidden"
-                            disabled={uploadingReceipt}
-                          />
-                          <div className="flex flex-col items-center gap-3">
-                            <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center">
-                              {uploadingReceipt ? (
-                                <motion.div
-                                  animate={{ rotate: 360 }}
-                                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                  className="w-6 h-6 border-2 border-rose-500 border-t-transparent rounded-full"
-                                />
-                              ) : (
-                                <Upload className="text-rose-600" size={24} />
-                              )}
-                            </div>
-                            <div>
-                              <p className="text-lg font-medium text-gray-900">
-                                {uploadingReceipt ? "Uploading..." : "Click to upload receipt"}
-                              </p>
-                              <p className="text-sm text-gray-600">PNG, JPG or PDF (max. 5MB)</p>
-                            </div>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Payment History */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 overflow-hidden">
-                      <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Payment History</h3>
-                      </div>
-                      <div className="divide-y divide-gray-200">
-                        {payments.map(payment => (
-                          <div key={payment.id} className="p-6 hover:bg-gray-50 transition-colors">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                                  <Check className="text-green-600" size={20} />
-                                </div>
-                                <div>
-                                  <p className="font-medium text-gray-900">{payment.amount}</p>
-                                  <p className="text-sm text-gray-600">
-                                    {payment.date} • {payment.method}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium capitalize">
-                                  {payment.status}
-                                </span>
-                                <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
-                                  <Download size={16} className="text-gray-600" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {activeTab === "payments" && <PaymentTab payments={payments} />}
 
                 {/* Health Profile Tab */}
                 {activeTab === "health" && (
