@@ -1,17 +1,17 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import DashboardHeader from "@/components/dashboard/UserDashboardHeader"
-import UserDashboardSidebar from "@/components/dashboard/UserDashboardSidebar"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
+import AccountTab from "@/components/dashboard/AccountTab"
 
-export default async function UserDashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardAccountPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user.id) {
     redirect("/login")
   }
 
+  // Fetching user data from database
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -53,18 +53,5 @@ export default async function UserDashboardLayout({ children }: { children: Reac
     phone: user.phone ?? "",
     createdAt: user.createdAt,
   }
-
-  return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-rose-50/30">
-      <DashboardHeader name={safeUser.name} plan={"Active"} />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Sidebar Navigation */}
-          <UserDashboardSidebar nextPayment="N/A" memberSince="N/A" />
-          <main className="lg:col-span-9">{children}</main>
-        </div>
-      </div>
-    </div>
-  )
+  return <AccountTab name={safeUser.name} email={safeUser.email} phone={safeUser.phone} />
 }

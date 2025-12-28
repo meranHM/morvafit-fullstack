@@ -2,13 +2,43 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
-import UserDashboard from "@/components/dashboard/UserDashboard"
+import OverviewTab from "@/components/dashboard/OverviewTab"
+
+const mockVideos = [
+  {
+    id: 1,
+    title: "Full Body Strength Training",
+    duration: "45 min",
+    level: "Intermediate",
+    thumbnail: "/thumb1.jpg",
+    assignedDate: "Mar 10, 2024",
+    completed: true,
+  },
+  {
+    id: 2,
+    title: "HIIT Cardio Blast",
+    duration: "30 min",
+    level: "Advanced",
+    thumbnail: "/thumb2.jpg",
+    assignedDate: "Mar 12, 2024",
+    completed: false,
+  },
+  {
+    id: 3,
+    title: "Core & Abs Workout",
+    duration: "25 min",
+    level: "Beginner",
+    thumbnail: "/thumb3.jpg",
+    assignedDate: "Mar 15, 2024",
+    completed: false,
+  },
+]
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user.id) {
-    redirect("login")
+    redirect("/login")
   }
 
   // Fetching user data from database
@@ -43,7 +73,7 @@ export default async function DashboardPage() {
   })
 
   if (!user) {
-    redirect("login")
+    redirect("/login")
   }
 
   // Preparing safe user data for client component
@@ -54,26 +84,5 @@ export default async function DashboardPage() {
     createdAt: user.createdAt,
   }
 
-  // Preparing body info data (if it exists)
-  const bodyInfo = user.bodyInfo
-    ? {
-        age: user.bodyInfo.age,
-        gender: user.bodyInfo.gender,
-        height: user.bodyInfo.height,
-        weight: user.bodyInfo.weight,
-        targetWeight: user.bodyInfo.targetWeight,
-        bmi: user.bodyInfo.bmi,
-        primaryGoal: user.bodyInfo.primaryGoal,
-        activityLevel: user.bodyInfo.activityLevel,
-        experienceLevel: user.bodyInfo.experienceLevel,
-        workoutDays: user.bodyInfo.workoutDays,
-        preferredTime: user.bodyInfo.preferredTime,
-        sessionDuration: user.bodyInfo.sessionDuration,
-        dietaryPreference: user.bodyInfo.dietaryPreference,
-        medicalConditions: user.bodyInfo.medicalConditions,
-        updatedAt: user.bodyInfo.updatedAt,
-      }
-    : null
-
-  return <UserDashboard user={safeUser} bodyInfo={bodyInfo} />
+  return <OverviewTab name={safeUser.name} nextPayment={"N/A"} videos={mockVideos} />
 }
