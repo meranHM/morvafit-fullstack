@@ -2,21 +2,10 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import {
-  Mail,
-  Lock,
-  User,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Dumbbell,
-  Heart,
-  Zap,
-  CheckCircle2,
-} from "lucide-react"
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Dumbbell, Heart, Zap } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { signIn } from "next-auth/react" // Import NextAuth's signIn function
+import { signIn, getSession } from "next-auth/react" // Import NextAuth's signIn and getSession functions
 import { useRouter } from "next/navigation" // For redirecting after login
 
 const AuthPage = () => {
@@ -30,8 +19,8 @@ const AuthPage = () => {
     confirmPassword: "",
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("") // For showing error messages
-  const [success, setSuccess] = useState("") // For showing success messages
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,10 +47,19 @@ const AuthPage = () => {
           // Login failed - show error message
           setError(result.error)
         } else {
-          // Login successful! Redirect to dashboard
+          // Login successful! Get session to check user role
           setSuccess("Login successful! Redirecting...")
+
+          // Fetch the session to get the user's role
+          const session = await getSession()
+
           setTimeout(() => {
-            router.push("/dashboard") // Change this to your dashboard route
+            // Redirect based on user role
+            if (session?.user?.role === "ADMIN") {
+              router.push("/admin") // Admin goes to admin panel
+            } else {
+              router.push("/dashboard") // Regular users go to dashboard
+            }
           }, 1000)
         }
       } else {

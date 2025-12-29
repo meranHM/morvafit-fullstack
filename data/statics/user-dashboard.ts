@@ -18,15 +18,3 @@ export const navigation = [
   { id: "health", label: "Health Profile", icon: FileText, href: "/dashboard/health-profile" },
   { id: "account", label: "Account", icon: User, href: "/dashboard/account" },
 ]
-
-export const stats = [
-  { label: "Workouts Completed", value: "24", icon: Check, color: "from-rose-500 to-pink-500" },
-  { label: "Total Hours", value: "18.5", icon: Clock, color: "from-purple-500 to-indigo-500" },
-  { label: "Current Streak", value: "7 days", icon: Zap, color: "from-orange-500 to-yellow-500" },
-  {
-    label: "Calories Burned",
-    value: "2,840",
-    icon: Target,
-    color: "from-green-500 to-emerald-500",
-  },
-]

@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 type TabType = "overview" | "clients" | "forms" | "payments" | "videos"
 
 const AdminPanelSidebar = () => {
   const [activeTab, setActiveTab] = useState<TabType>("overview")
-
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
@@ -44,11 +44,11 @@ const AdminPanelSidebar = () => {
             const Icon = item.icon
             const isActive = activeTab === item.id
             return (
-              <button
+              <Link
                 key={item.id}
+                href={item.href}
                 onClick={() => {
                   setActiveTab(item.id as TabType)
-                  setSidebarOpen(false)
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   isActive ? "bg-rose-50 text-rose-600" : "text-gray-700 hover:bg-gray-100"
@@ -56,7 +56,7 @@ const AdminPanelSidebar = () => {
               >
                 <Icon size={20} />
                 {item.label}
-              </button>
+              </Link>
             )
           })}
         </nav>

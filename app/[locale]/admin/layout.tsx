@@ -23,9 +23,9 @@ export default async function AdminPanelLayout({ children }: { children: React.R
     },
   })
 
-  /* if (!admin || admin.role !== "ADMIN") {
-    redirect("/")
-  } */
+  if (!admin || admin.role !== "ADMIN") {
+    redirect("/login")
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
