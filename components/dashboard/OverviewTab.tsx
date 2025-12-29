@@ -1,41 +1,11 @@
 "use client"
 
-import { Video, Receipt, Check, Play } from "lucide-react"
+import { Video, Receipt, Check, Play, Clock, Target } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { stats } from "@/data/statics/user-dashboard"
 
-const mockVideos = [
-  {
-    id: 1,
-    title: "Full Body Strength Training",
-    duration: "45 min",
-    level: "Intermediate",
-    thumbnail: "/thumb1.jpg",
-    assignedDate: "Mar 10, 2024",
-    completed: true,
-  },
-  {
-    id: 2,
-    title: "HIIT Cardio Blast",
-    duration: "30 min",
-    level: "Advanced",
-    thumbnail: "/thumb2.jpg",
-    assignedDate: "Mar 12, 2024",
-    completed: false,
-  },
-  {
-    id: 3,
-    title: "Core & Abs Workout",
-    duration: "25 min",
-    level: "Beginner",
-    thumbnail: "/thumb3.jpg",
-    assignedDate: "Mar 15, 2024",
-    completed: false,
-  },
-]
-
+// Type for video data passed from the server
 interface VideoType {
-  id: number
+  id: string
   title: string
   duration: string
   level: string
@@ -44,13 +14,49 @@ interface VideoType {
   completed: boolean
 }
 
+// Stats passed from the server (calculated from real data)
+interface StatsType {
+  workoutsCompleted: number
+  totalAssigned: number
+  totalHours: string
+}
+
 interface OverviewTabProps {
   videos: VideoType[]
   name: string
   nextPayment: string
+  newWorkoutsCount: number
+  stats: StatsType
 }
 
-const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment }) => {
+const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment, newWorkoutsCount, stats }) => {
+  // Build the stats array with real data from props
+  const statsDisplay = [
+    {
+      label: "Workouts Completed",
+      value: `${stats.workoutsCompleted}/${stats.totalAssigned}`,
+      icon: Check,
+      color: "from-rose-500 to-pink-500",
+    },
+    {
+      label: "Total Hours",
+      value: stats.totalHours,
+      icon: Clock,
+      color: "from-purple-500 to-indigo-500",
+    },
+    {
+      label: "Videos Assigned",
+      value: stats.totalAssigned.toString(),
+      icon: Video,
+      color: "from-orange-500 to-yellow-500",
+    },
+    {
+      label: "Pending Workouts",
+      value: (stats.totalAssigned - stats.workoutsCompleted).toString(),
+      icon: Target,
+      color: "from-green-500 to-emerald-500",
+    },
+  ]
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -71,7 +77,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment }) 
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat, i) => {
+            {statsDisplay.map((stat, i) => {
               const Icon = stat.icon
               return (
                 <motion.div
@@ -102,7 +108,11 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment }) 
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Continue Your Journey</h3>
-                  <p className="text-sm text-gray-600">2 new workouts assigned</p>
+                  <p className="text-sm text-gray-600">
+                    {newWorkoutsCount > 0
+                      ? `${newWorkoutsCount} new workout${newWorkoutsCount > 1 ? "s" : ""} assigned`
+                      : "No new workouts"}
+                  </p>
                 </div>
               </div>
               <button
@@ -135,31 +145,43 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment }) 
           {/* Recent Activity */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Workouts</h3>
-            <div className="space-y-3">
-              {videos.slice(0, 3).map(video => (
-                <div
-                  key={video.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg bg-linear-to-br from-rose-400 to-pink-400 flex items-center justify-center">
-                      <Play className="text-white" size={24} />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{video.title}</p>
-                      <p className="text-sm text-gray-600">
-                        {video.duration} • {video.level}
-                      </p>
-                    </div>
-                  </div>
-                  {video.completed && (
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <Check className="text-green-600" size={16} />
-                    </div>
-                  )}
+            {videos.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                  <Video className="text-gray-400" size={24} />
                 </div>
-              ))}
-            </div>
+                <p className="text-gray-600">No workouts assigned yet.</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Complete your payment to get personalized workouts.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {videos.slice(0, 3).map(video => (
+                  <div
+                    key={video.id}
+                    className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-lg bg-linear-to-br from-rose-400 to-pink-400 flex items-center justify-center">
+                        <Play className="text-white" size={24} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{video.title}</p>
+                        <p className="text-sm text-gray-600">
+                          {video.duration} • {video.level}
+                        </p>
+                      </div>
+                    </div>
+                    {video.completed && (
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <Check className="text-green-600" size={16} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

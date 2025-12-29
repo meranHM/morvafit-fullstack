@@ -14,6 +14,19 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
   const [isEditingAccount, setIsEditingAccount] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
 
+  // Generate initials from user's name (e.g., "John Doe" -> "JD")
+  const getInitials = (fullName: string): string => {
+    const names = fullName.trim().split(" ").filter(Boolean)
+    if (names.length === 0) return "?"
+    if (names.length === 1) {
+      // Single name: take first two characters
+      return names[0].substring(0, 2).toUpperCase()
+    }
+    // Multiple names: take first letter of first and last name
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase()
+  }
+  const initials = getInitials(name)
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -46,7 +59,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
               <div className="flex items-center gap-6">
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold">
-                    SJ
+                    {initials}
                   </div>
                   <button className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="text-white" size={24} />

@@ -11,7 +11,7 @@ type Receipt = {
   imageUrl: string
   amount: number
   status: string
-  createdAt: Date
+  createdAt: string
 }
 
 interface PaymentTabProps {
@@ -25,12 +25,7 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
-  const {
-    data,
-    error,
-    isLoading: loadingReceipts,
-    mutate,
-  } = useSWR("/api/user/receipts", fetcher, {
+  const { data, mutate } = useSWR("/api/user/receipts", fetcher, {
     fallbackData: {
       data: receitps,
     },
@@ -83,6 +78,9 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
       setFile(null)
       setAmount("")
       setSuccess("Receipt uploaded successfully! Waiting for admin approval.")
+
+      // Refetch receipts from database to update the Payment History
+      mutate()
 
       const fileInput = document.getElementById("receipt-upload") as HTMLInputElement
       if (fileInput) fileInput.value = ""
@@ -196,7 +194,7 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
               <h3 className="text-lg font-semibold text-gray-900">Payment History</h3>
             </div>
             <div className="divide-y divide-gray-200">
-              {receitps.map(payment => (
+              {(data?.data ?? receitps).map((payment: Receipt) => (
                 <div key={payment.id} className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -206,7 +204,7 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
                       <div>
                         <p className="font-medium text-gray-900">{payment.amount}</p>
                         <p className="text-sm text-gray-600">
-                          {payment.createdAt.toLocaleDateString()}
+                          {new Date(payment.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>

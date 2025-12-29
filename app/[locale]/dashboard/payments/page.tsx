@@ -16,5 +16,12 @@ export default async function DashboardPaymentsPage() {
       createdAt: true,
     },
   })
-  return <PaymentTab receitps={receipts} />
+
+  // Serialize Date objects to ISO strings for client component
+  const serializedReceipts = receipts.map((receipt) => ({
+    ...receipt,
+    createdAt: receipt.createdAt.toISOString(),
+  }))
+
+  return <PaymentTab receitps={serializedReceipts} />
 }

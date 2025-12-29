@@ -12,6 +12,7 @@ export default async function UserDashboardLayout({ children }: { children: Reac
     redirect("/login")
   }
 
+  // Fetch user data along with their latest approved receipt for payment status
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -19,25 +20,12 @@ export default async function UserDashboardLayout({ children }: { children: Reac
       email: true,
       phone: true,
       createdAt: true,
-      // Including body info if it exists (one-to-one relationship)
-      bodyInfo: {
-        select: {
-          age: true,
-          gender: true,
-          height: true,
-          weight: true,
-          targetWeight: true,
-          bmi: true,
-          primaryGoal: true,
-          activityLevel: true,
-          experienceLevel: true,
-          workoutDays: true,
-          preferredTime: true,
-          sessionDuration: true,
-          dietaryPreference: true,
-          medicalConditions: true,
-          updatedAt: true,
-        },
+      // Get the most recent approved receipt to show payment status
+      receipts: {
+        where: { status: "APPROVED" },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { createdAt: true },
       },
     },
   })
@@ -45,6 +33,24 @@ export default async function UserDashboardLayout({ children }: { children: Reac
   if (!user) {
     redirect("/login")
   }
+
+  // Format memberSince date (when user signed up)
+  const memberSince = user.createdAt.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
+
+  // Calculate next payment status based on last approved receipt
+  // If user has an approved receipt, show when it was made
+  // Otherwise show "No payments yet"
+  const lastApprovedReceipt = user.receipts[0]
+  const nextPayment = lastApprovedReceipt
+    ? `Last: ${lastApprovedReceipt.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })}`
+    : "No payments yet"
 
   // Preparing safe user data for client component
   const safeUser = {
@@ -61,7 +67,7 @@ export default async function UserDashboardLayout({ children }: { children: Reac
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Sidebar Navigation */}
-          <UserDashboardSidebar nextPayment="N/A" memberSince="N/A" />
+          <UserDashboardSidebar nextPayment={nextPayment} memberSince={memberSince} />
           <main className="lg:col-span-9">{children}</main>
         </div>
       </div>

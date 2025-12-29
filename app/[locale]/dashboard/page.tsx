@@ -4,36 +4,6 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import OverviewTab from "@/components/dashboard/OverviewTab"
 
-const mockVideos = [
-  {
-    id: 1,
-    title: "Full Body Strength Training",
-    duration: "45 min",
-    level: "Intermediate",
-    thumbnail: "/thumb1.jpg",
-    assignedDate: "Mar 10, 2024",
-    completed: true,
-  },
-  {
-    id: 2,
-    title: "HIIT Cardio Blast",
-    duration: "30 min",
-    level: "Advanced",
-    thumbnail: "/thumb2.jpg",
-    assignedDate: "Mar 12, 2024",
-    completed: false,
-  },
-  {
-    id: 3,
-    title: "Core & Abs Workout",
-    duration: "25 min",
-    level: "Beginner",
-    thumbnail: "/thumb3.jpg",
-    assignedDate: "Mar 15, 2024",
-    completed: false,
-  },
-]
-
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
 
@@ -41,33 +11,35 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  // Fetching user data from database
+  // Fetching user data along with ALL video assignments (for stats) and receipts
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
       name: true,
-      email: true,
-      phone: true,
-      createdAt: true,
-      // Including body info if it exists (one-to-one relationship)
-      bodyInfo: {
+      // Getting ALL video assignments to calculate stats
+      videoAssignments: {
+        orderBy: { assignedAt: "desc" },
         select: {
-          age: true,
-          gender: true,
-          height: true,
-          weight: true,
-          targetWeight: true,
-          bmi: true,
-          primaryGoal: true,
-          activityLevel: true,
-          experienceLevel: true,
-          workoutDays: true,
-          preferredTime: true,
-          sessionDuration: true,
-          dietaryPreference: true,
-          medicalConditions: true,
-          updatedAt: true,
+          id: true,
+          assignedAt: true,
+          completed: true,
+          video: {
+            select: {
+              id: true,
+              title: true,
+              duration: true, // Duration in seconds
+              level: true,
+              thumbnailUrl: true,
+            },
+          },
         },
+      },
+      // Getting latest approved receipt for payment status
+      receipts: {
+        where: { status: "APPROVED" },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { createdAt: true },
       },
     },
   })
@@ -76,13 +48,70 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  // Preparing safe user data for client component
-  const safeUser = {
-    name: user.name ?? "Anonymous",
-    email: user.email ?? "",
-    phone: user.phone ?? "",
-    createdAt: user.createdAt,
+  // Transforming video assignments into the format the component expects
+  const videos = user.videoAssignments.map(assignment => ({
+    id: assignment.video.id,
+    title: assignment.video.title,
+    duration: assignment.video.duration
+      ? `${Math.round(assignment.video.duration / 60)} min`
+      : "N/A",
+    durationSeconds: assignment.video.duration || 0, // Keep raw seconds for stats calculation
+    level: formatEnumValue(assignment.video.level),
+    thumbnail: assignment.video.thumbnailUrl || "/thumb-placeholder.jpg",
+    assignedDate: assignment.assignedAt.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    completed: assignment.completed,
+  }))
+
+  // Calculate stats from real data
+  const completedWorkouts = videos.filter(v => v.completed)
+  const workoutsCompleted = completedWorkouts.length
+  const totalAssigned = videos.length
+
+  // Calculate total hours from completed workouts (duration is in seconds)
+  const totalSeconds = completedWorkouts.reduce((sum, v) => sum + v.durationSeconds, 0)
+  const totalHours = (totalSeconds / 3600).toFixed(1) // Convert seconds to hours
+
+  // Calculating next payment status
+  const lastApprovedReceipt = user.receipts[0]
+  const nextPayment = lastApprovedReceipt
+    ? `Last: ${lastApprovedReceipt.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })}`
+    : "No payments yet"
+
+  // Counting new (incomplete) workouts for the "Continue Your Journey" section
+  const newWorkoutsCount = videos.filter(v => !v.completed).length
+
+  // Only pass the 3 most recent videos for the Recent Workouts display
+  const recentVideos = videos.slice(0, 3)
+
+  // Stats object with real data where available
+  const stats = {
+    workoutsCompleted,
+    totalAssigned,
+    totalHours,
   }
 
-  return <OverviewTab name={safeUser.name} nextPayment={"N/A"} videos={mockVideos} />
+  return (
+    <OverviewTab
+      name={user.name ?? "Anonymous"}
+      nextPayment={nextPayment}
+      videos={recentVideos}
+      newWorkoutsCount={newWorkoutsCount}
+      stats={stats}
+    />
+  )
+}
+
+// Helper function to format enum values for display
+function formatEnumValue(value: string): string {
+  return value
+    .split("_")
+    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ")
 }
