@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import OverviewTab from "@/components/dashboard/OverviewTab"
 
-export default async function DashboardPage() {
+export default async function DashboardOverviewPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user.id) {
