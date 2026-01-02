@@ -287,6 +287,7 @@ model Video {
   // RELATIONSHIPS
   // ============================================
   assignments VideoAssignment[]  // One video can be assigned to many users
+  tags        VideoTag[]         // Many-to-many: Video can have multiple tags
 }
 
 // ============================================
@@ -302,12 +303,21 @@ enum VideoLevel {
 // VIDEO CATEGORY ENUM
 // ============================================
 enum VideoCategory {
-  STRENGTH     // Weight training, resistance exercises
-  CARDIO       // Running, cycling, high intensity
-  FLEXIBILITY  // Stretching, yoga
-  HIIT         // High-Intensity Interval Training
-  CORE         // Ab and core workouts
-  FULL_BODY    // Complete body workouts
+  UPPER_BODY
+  LEGS
+  GLUTES
+  CORE
+  ABS
+  CARDIO
+  CARDIO_BOXING
+  FULL_BODY
+  FULL_BODY_SCULPT
+  HIIT
+  PILATES
+  ABS_CARDIO
+  BODYWEIGHT_TRAINING
+  TRX
+  FUNCTIONAL_TRAINING
 }
 
 // ============================================
@@ -346,4 +356,53 @@ model VideoAssignment {
   // ============================================
   // Prevent assigning the same video to the same user twice
   @@unique([userId, videoId])
+}
+
+// ============================================
+// TAG MODEL
+// ============================================
+// Flexible tags for categorizing videos (e.g., "Upper Body", "No Equipment")
+// Admin can create custom tags and assign them to videos
+model Tag {
+  id        String   @id @default(cuid())
+
+  // Tag name (e.g., "Upper Body", "No Equipment", "Beginner Friendly")
+  name      String   @unique  // Each tag name must be unique
+
+  // Optional: Color for UI display (hex color like "#FF5733")
+  color     String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  videos    VideoTag[]  // Many-to-many relation with videos
+}
+
+// ============================================
+// VIDEO-TAG JUNCTION TABLE
+// ============================================
+// Links videos to tags (many-to-many relationship)
+model VideoTag {
+  id        String   @id @default(cuid())
+  videoId   String   // Which video has this tag
+  tagId     String   // Which tag is assigned
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // ============================================
+  // RELATIONSHIPS
+  // ============================================
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // UNIQUE CONSTRAINT
+  // ============================================
+  // Prevent duplicate video-tag combinations
+  @@unique([videoId, tagId])
 }

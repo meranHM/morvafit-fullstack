@@ -4,49 +4,23 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Receipt, FileText } from "lucide-react"
+import type { StatsData, RecentPayment } from "@/app/[locale]/admin/page"
 
-const OverviewTab = () => {
-  const stats = [
-    { label: "Total Clients", value: "124", change: "+12%", trend: "up" },
-    { label: "Pending Payments", value: "8", change: "-3%", trend: "down" },
-    { label: "Active Plans", value: "98", change: "+8%", trend: "up" },
-    { label: "Pending Forms", value: "5", change: "+2", trend: "up" },
+// Props type for OverviewTab - receives data from server component
+type OverviewTabProps = {
+  stats: StatsData
+  recentPayments: RecentPayment[]
+}
+
+const OverviewTab = ({ stats, recentPayments }: OverviewTabProps) => {
+  // Format stats for display with labels
+  const statsDisplay = [
+    { label: "Total Clients", value: stats.totalClients.toString() },
+    { label: "Pending Payments", value: stats.pendingPayments.toString() },
+    { label: "Active Plans", value: stats.activePlans.toString() },
+    { label: "Health Forms", value: stats.pendingForms.toString() },
   ]
 
-  const mockPayments = [
-    {
-      id: 1,
-      clientName: "Sarah Johnson",
-      amount: "$150",
-      date: "2024-03-01",
-      status: "approved",
-      receiptUrl: "#",
-    },
-    {
-      id: 2,
-      clientName: "Michael Chen",
-      amount: "$150",
-      date: "2024-03-05",
-      status: "pending",
-      receiptUrl: "#",
-    },
-    {
-      id: 3,
-      clientName: "Emma Davis",
-      amount: "$150",
-      date: "2024-02-28",
-      status: "approved",
-      receiptUrl: "#",
-    },
-    {
-      id: 4,
-      clientName: "James Wilson",
-      amount: "$150",
-      date: "2024-03-03",
-      status: "rejected",
-      receiptUrl: "#",
-    },
-  ]
   return (
     <div className="space-y-6">
       <div>
@@ -56,7 +30,7 @@ const OverviewTab = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map(stat => (
+        {statsDisplay.map(stat => (
           <Card key={stat.label}>
             <CardHeader className="pb-2">
               <CardDescription>{stat.label}</CardDescription>
@@ -64,7 +38,6 @@ const OverviewTab = () => {
             <CardContent>
               <div className="flex items-end justify-between">
                 <p className="text-3xl font-bold">{stat.value}</p>
-                <Badge variant={stat.trend === "up" ? "default" : "secondary"}>{stat.change}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -80,25 +53,29 @@ const OverviewTab = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockPayments.slice(0, 3).map(payment => (
-                <div key={payment.id} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-sm">{payment.clientName}</p>
-                    <p className="text-xs text-gray-500">{payment.date}</p>
+              {recentPayments.length === 0 ? (
+                <p className="text-sm text-gray-500">No recent payments</p>
+              ) : (
+                recentPayments.slice(0, 3).map(payment => (
+                  <div key={payment.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">{payment.clientName}</p>
+                      <p className="text-xs text-gray-500">{payment.date}</p>
+                    </div>
+                    <Badge
+                      variant={
+                        payment.status === "approved"
+                          ? "default"
+                          : payment.status === "pending"
+                            ? "secondary"
+                            : "destructive"
+                      }
+                    >
+                      {payment.status}
+                    </Badge>
                   </div>
-                  <Badge
-                    variant={
-                      payment.status === "approved"
-                        ? "default"
-                        : payment.status === "pending"
-                          ? "secondary"
-                          : "destructive"
-                    }
-                  >
-                    {payment.status}
-                  </Badge>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -112,13 +89,13 @@ const OverviewTab = () => {
             <div className="space-y-3">
               <Alert>
                 <Receipt className="h-4 w-4" />
-                <AlertTitle>8 Payments to Review</AlertTitle>
+                <AlertTitle>{stats.pendingPayments} Payments to Review</AlertTitle>
                 <AlertDescription>New payment receipts are waiting for approval.</AlertDescription>
               </Alert>
               <Alert>
                 <FileText className="h-4 w-4" />
-                <AlertTitle>5 Health Forms</AlertTitle>
-                <AlertDescription>New client health forms need review.</AlertDescription>
+                <AlertTitle>{stats.pendingForms} Health Forms</AlertTitle>
+                <AlertDescription>Client health forms to review.</AlertDescription>
               </Alert>
             </div>
           </CardContent>

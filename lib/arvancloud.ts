@@ -2,6 +2,7 @@
 // ============================================
 // This file configures AWS S3 SDK to work with ArvanCloud storage
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 // CONFIGURING S3 CLIENT
 // ============================================
@@ -61,7 +62,7 @@ export async function uploadToS3(params: {
     Key: key,
     Body: fileBuffer,
     ContentType: contentType,
-    // ACL: "public-read", // Making the file publicly accessible if needed
+    ACL: "public-read", // Making the file publicly accessible
   })
 
   // STEP 4: Uploading the the file to S3
@@ -134,27 +135,75 @@ export function generateUniqueFileName(originalName: string): string {
   return `${timestamp}-${randomString}-${cleanName}`
 }
 
-// HOW TO USE THESE FUNCTIONS
+// HELPER FUNCTION: Generate Presigned URL for Direct Upload
+// ============================================
+// This function generates a presigned URL that allows clients to upload
+// files directly to S3 without going through our server.
+// Perfect for large files (videos) that would timeout with server upload.
+export async function generatePresignedUploadUrl(params: {
+  fileName: string // The file name/key to use in S3
+  contentType: string // MIME type (e.g., "video/mp4")
+  folder?: string // Optional folder prefix (e.g., "videos")
+  expiresIn?: number // URL expiration time in seconds (default: 1 hour)
+}): Promise<{
+  uploadUrl: string // The presigned URL to upload to
+  fileKey: string // The S3 key where file will be stored
+  publicUrl: string // The public URL after upload completes
+}> {
+  const { fileName, contentType, folder = "", expiresIn = 3600 } = params
+
+  // STEP 1: Generate the S3 key (path in bucket)
+  const key = folder ? `${folder}/${fileName}` : fileName
+
+  // STEP 2: Create the PutObject command
+  // This defines what the presigned URL will be able to do
+  const command = new PutObjectCommand({
+    Bucket: process.env.ARVAN_BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+    ACL: "public-read", // File will be publicly accessible after upload
+  })
+
+  // STEP 3: Generate the presigned URL
+  // This URL allows anyone with it to upload a file to this specific location
+  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn })
+
+  // STEP 4: Generate the public URL (what the file URL will be after upload)
+  const publicUrl = `https://${process.env.ARVAN_BUCKET_NAME}.${process.env.ARVAN_ENDPOINT}/${key}`
+
+  return {
+    uploadUrl,
+    fileKey: key,
+    publicUrl,
+  }
+}
+
+// HOW TO USE PRESIGNED URLS
 // ============================================
 //
-// UPLOADING A FILE:
-// import { uploadToS3, generateUniqueFileName } from "@/lib/arvancloud"
+// SERVER SIDE (API Route):
+// import { generatePresignedUploadUrl, generateUniqueFileName } from "@/lib/arvancloud"
 //
-// const file = ... // File from form upload
-// const uniqueName = generateUniqueFileName(file.name)
-//
-// const url = await uploadToS3({
-//   file: Buffer.from(await file.arrayBuffer()),
-//   fileName: uniqueName,
-//   contentType: file.type,
-//   folder: "receipts" // Optional
+// const fileName = generateUniqueFileName("my-video.mp4")
+// const { uploadUrl, publicUrl } = await generatePresignedUploadUrl({
+//   fileName,
+//   contentType: "video/mp4",
+//   folder: "videos",
+//   expiresIn: 3600 // 1 hour
 // })
 //
-// // url = "https://bucket.endpoint/receipts/1703527890123-a1b2c3-receipt.jpg"
+// // Return uploadUrl to client
 //
-// DELETING A FILE:
-// import { deleteFromS3 } from "@/lib/arvancloud"
+// CLIENT SIDE:
+// // Upload directly to S3 using the presigned URL
+// await fetch(uploadUrl, {
+//   method: "PUT",
+//   body: file,
+//   headers: {
+//     "Content-Type": file.type,
+//   },
+// })
 //
-// await deleteFromS3("https://bucket.endpoint/receipts/file.jpg")
+// // After successful upload, notify server with publicUrl
 //
 // ============================================
