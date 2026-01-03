@@ -3,14 +3,19 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, Edit, Camera, Lock, X } from "lucide-react"
+import EmailVerificationBanner from "./EmailVerificationBanner"
 
+// ============================================
+// PROPS INTERFACE
+// ============================================
 interface AccountTabProps {
   name: string
   email: string
   phone: string
+  emailVerified: boolean // Whether user's email is verified
 }
 
-const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
+const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone, emailVerified }) => {
   const [isEditingAccount, setIsEditingAccount] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
 
@@ -29,6 +34,12 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
 
   return (
     <>
+      {/* ============================================ */}
+      {/* EMAIL VERIFICATION BANNER */}
+      {/* ============================================ */}
+      {/* Show warning banner if user hasn't verified their email */}
+      {!emailVerified && <EmailVerificationBanner email={email} />}
+
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -53,27 +64,6 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
               )}
             </div>
 
-            {/* Profile Picture */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h3>
-              <div className="flex items-center gap-6">
-                <div className="relative group">
-                  <div className="w-24 h-24 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold">
-                    {initials}
-                  </div>
-                  <button className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="text-white" size={24} />
-                  </button>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-2">Upload a new profile picture</p>
-                  <button className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium hover:bg-gray-50 transition-colors">
-                    Choose File
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Personal Information */}
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
@@ -92,18 +82,8 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  {isEditingAccount ? (
-                    <input
-                      type="email"
-                      defaultValue={email}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300"
-                    />
-                  ) : (
-                    <p className="text-lg text-gray-900">{email}</p>
-                  )}
+                  <p className="block text-sm font-medium text-gray-700 mb-2">Email Address</p>
+                  <span className="text-lg text-gray-900">{email}</span>
                 </div>
 
                 <div>
@@ -159,7 +139,8 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50">
+                {/* Two Step Verification - Temporarily Disabled Feature */}
+                {/*  <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                       <Check className="text-green-600" size={20} />
@@ -172,20 +153,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ name, email, phone }) => {
                   <button className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium hover:bg-white transition-colors">
                     Enable
                   </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Danger Zone */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-red-200 p-6">
-              <h3 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h3>
-              <div className="space-y-3">
-                <button className="w-full py-3 rounded-xl border-2 border-red-200 text-red-600 font-medium hover:bg-red-50 transition-all duration-300">
-                  Pause Membership
-                </button>
-                <button className="w-full py-3 rounded-xl border-2 border-red-200 text-red-600 font-medium hover:bg-red-50 transition-all duration-300">
-                  Delete Account
-                </button>
+                </div> */}
               </div>
             </div>
           </div>

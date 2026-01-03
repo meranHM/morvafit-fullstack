@@ -93,7 +93,7 @@ const AuthPage = () => {
           setError(data.error || "Registration failed. Please try again.")
         } else {
           // Registration successful!
-          setSuccess("Account created successfully! Please sign in.")
+          setSuccess("Account created! Please check your email to verify your account, then sign in.")
 
           // Clear form and switch to login mode
           setFormData({

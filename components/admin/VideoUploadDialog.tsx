@@ -39,7 +39,13 @@ type VideoUploadDialogProps = {
 }
 
 // Upload status for showing step-by-step progress
-type UploadStatus = "idle" | "getting-urls" | "uploading-video" | "uploading-thumbnail" | "saving" | "complete"
+type UploadStatus =
+  | "idle"
+  | "getting-urls"
+  | "uploading-video"
+  | "uploading-thumbnail"
+  | "saving"
+  | "complete"
 
 export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUploadDialogProps) {
   const router = useRouter()

@@ -406,3 +406,26 @@ model VideoTag {
   // Prevent duplicate video-tag combinations
   @@unique([videoId, tagId])
 }
+
+// ============================================
+// VERIFICATION TOKEN MODEL
+// ============================================
+// Stores email verification tokens for magic link emails
+// When a user registers, we create a token and email them a magic link
+// Clicking the link verifies their email and deletes the token
+model VerificationToken {
+  id        String   @id @default(cuid())
+
+  // The verification token (unique random string sent in the magic link)
+  token     String   @unique
+
+  // Email this token is for
+  // Not unique because a user can request multiple verification emails
+  email     String
+
+  // When the token expires (24 hours from creation)
+  expiresAt DateTime
+
+  // When the token was created
+  createdAt DateTime @default(now())
+}

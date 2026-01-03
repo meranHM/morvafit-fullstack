@@ -3,7 +3,7 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { fetcher } from "@/lib/fetcher"
-import { Upload, Check, Download } from "lucide-react"
+import { Upload, Check, Download, AlertTriangle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 type Receipt = {
@@ -16,9 +16,10 @@ type Receipt = {
 
 interface PaymentTabProps {
   receitps: Receipt[]
+  emailVerified: boolean
 }
 
-const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
+const PaymentTab: React.FC<PaymentTabProps> = ({ receitps, emailVerified }) => {
   const [file, setFile] = useState<File | null>(null)
   const [amount, setAmount] = useState("")
   const [uploading, setUploading] = useState(false)
@@ -41,11 +42,15 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
     }
   }
 
-  // This runs when user clicks the upload button
   const handleUploadReceipt = async (): Promise<void> => {
-    // Clear previous messages
     setUploadError(null)
     setSuccess(null)
+
+    // Users must verify their email before uploading receipts
+    if (!emailVerified) {
+      setUploadError("Please verify your email before submitting a payment receipt.")
+      return
+    }
 
     if (!file) {
       setUploadError("Please select a receipt file first.")
@@ -79,7 +84,7 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
       setAmount("")
       setSuccess("Receipt uploaded successfully! Waiting for admin approval.")
 
-      // Refetch receipts from database to update the Payment History
+      // Refetching receipts from database to update the Payment History
       mutate()
 
       const fileInput = document.getElementById("receipt-upload") as HTMLInputElement
@@ -108,6 +113,20 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
           {/* Upload Receipt */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload Payment Receipt</h3>
+
+            {/* Show warning if email is not verified */}
+            {!emailVerified && (
+              <div className="mb-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-sm flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium">Email verification required</p>
+                  <p>
+                    Please verify your email address before uploading receipts. Check your inbox for
+                    the verification link or go to your Account settings to resend it.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Error Message */}
             {uploadError && (
@@ -165,9 +184,10 @@ const PaymentTab: React.FC<PaymentTabProps> = ({ receitps }) => {
             </div>
 
             {/* Upload Button */}
+            {/* Disabled if: uploading, no file, no amount, OR email not verified */}
             <button
               onClick={handleUploadReceipt}
-              disabled={uploading || !file || !amount}
+              disabled={uploading || !file || !amount || !emailVerified}
               className="w-full px-6 py-3 rounded-xl bg-linear-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-rose-500/25 hover:shadow-xl hover:shadow-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {uploading ? (

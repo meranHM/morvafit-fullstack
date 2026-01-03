@@ -2,41 +2,32 @@
 // USER REGISTRATION API ENDPOINT
 // ============================================
 // This endpoint allows new users to create an account
+// After creating the account, we send a verification email
 
 import { NextResponse } from "next/server"
 import { hash } from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { createVerificationToken } from "@/lib/verification"
+import { sendVerificationEmail } from "@/lib/email"
 
-// ============================================
 // POST HANDLER - Registering a New User
 // ============================================
 export async function POST(request: Request) {
   try {
-    // ============================================
-    // STEP 1: Getting data from request body
-    // ============================================
     const body = await request.json()
     const { email, password, name } = body
 
-    // ============================================
-    // STEP 2: Validating required fields
-    // ============================================
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
-    // ============================================
-    // STEP 3: Validating email format (basic at the moment, will update later)
-    // ============================================
+    // Validating email format (basic at the moment, will update later)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
-    // ============================================
-    // STEP 4: Validate password strength
-    // ============================================
-    // Require at least 8 characters
+    // Validating password strength
     if (password.length < 8) {
       return NextResponse.json(
         { error: "Password must be at least 8 characters long" },
@@ -44,29 +35,20 @@ export async function POST(request: Request) {
       )
     }
 
-    // ============================================
-    // STEP 5: Check if user already exists
-    // ============================================
     const existingUser = await prisma.user.findUnique({
       where: {
-        email: email.toLowerCase(), // Storing emails in lowercase for consistency
+        email: email.toLowerCase(),
       },
     })
 
     if (existingUser) {
-      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 }) // 409 = Conflict
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 })
     }
 
-    // ============================================
-    // STEP 6: Hashing the password
-    // ============================================
-    // hash() creates a one-way encrypted version
-    // The number 12 is the "salt rounds" - higher = more secure but slower
+    // Hashing the password
     const hashedPassword = await hash(password, 12)
 
-    // ============================================
-    // STEP 7: Creating user in database
-    // ============================================
+    // Creating user in database
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
@@ -74,30 +56,46 @@ export async function POST(request: Request) {
         name: name || null, // Optional name field
         // role defaults to "USER" (from schema)
         // isBlocked defaults to false (from schema)
+        // emailVerified stays null until they verify
         // createdAt and updatedAt set automatically
       },
     })
 
-    // ============================================
-    // STEP 8: Returning success (we don't send the password!)
-    // ============================================
+    // Sending verification email
+    // Generating a verification token for this new user
+    // This token will be included in the magic link URL
+    const verificationToken = await createVerificationToken(user.email)
+
+    // Send the verification email with the magic link
+    // Even if this fails, we still created the account successfully
+    // User can request a new verification email later
+    const emailResult = await sendVerificationEmail({
+      email: user.email,
+      token: verificationToken,
+      name: user.name || undefined,
+    })
+
+    // Log if email failed (but we don't fail the registration)
+    if (!emailResult.success) {
+      console.error("Failed to send verification email:", emailResult.error)
+    }
+
     return NextResponse.json(
       {
         success: true,
-        message: "Account created successfully!",
+        message: "Account created! Please check your email to verify your account.",
         user: {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
         },
+        // Letting frontend know if verification email was sent
+        verificationEmailSent: emailResult.success,
       },
-      { status: 201 } // 201 = Created
+      { status: 201 }
     )
   } catch (error) {
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
     console.error("Registration error:", error)
 
     return NextResponse.json(
@@ -109,34 +107,3 @@ export async function POST(request: Request) {
     )
   }
 }
-
-// ============================================
-// HOW TO USE THIS ENDPOINT
-// ============================================
-//
-// We send a POST request to: /api/auth/register
-//
-// Request body (JSON):
-// {
-//   "email": "user@example.com",
-//   "password": "securepassword123",
-//   "name": "John Doe" (optional)
-// }
-//
-// Success response (201):
-// {
-//   "success": true,
-//   "message": "Account created successfully!",
-//   "user": {
-//     "id": "clx...",
-//     "email": "user@example.com",
-//     "name": "John Doe",
-//     "role": "USER"
-//   }
-// }
-//
-// Error responses:
-// - 400: Invalid input (missing fields, invalid email, weak password)
-// - 409: Email already exists
-// - 500: Server error
-// ============================================

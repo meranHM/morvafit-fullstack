@@ -18,6 +18,7 @@ export default async function DashboardAccountPage() {
       name: true,
       email: true,
       phone: true,
+      emailVerified: true, // Include email verification status
       createdAt: true,
       // Including body info if it exists (one-to-one relationship)
       bodyInfo: {
@@ -51,7 +52,15 @@ export default async function DashboardAccountPage() {
     name: user.name ?? "Anonymous",
     email: user.email ?? "",
     phone: user.phone ?? "",
+    emailVerified: !!user.emailVerified, // Convert to boolean (null -> false)
     createdAt: user.createdAt,
   }
-  return <AccountTab name={safeUser.name} email={safeUser.email} phone={safeUser.phone} />
+  return (
+    <AccountTab
+      name={safeUser.name}
+      email={safeUser.email}
+      phone={safeUser.phone}
+      emailVerified={safeUser.emailVerified}
+    />
+  )
 }

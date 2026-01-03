@@ -1,10 +1,19 @@
 import PaymentTab from "@/components/dashboard/PaymentTab"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function DashboardPaymentsPage() {
-  const session = await getServerSession()
+  // Get session with authOptions for proper user data
+  const session = await getServerSession(authOptions)
 
+  // Fetch user's email verification status
+  const user = await prisma.user.findUnique({
+    where: { id: session?.user.id },
+    select: { emailVerified: true },
+  })
+
+  // Fetch all receipts for this user
   const receipts = await prisma.receipt.findMany({
     where: { userId: session?.user.id },
     orderBy: { createdAt: "desc" },
@@ -23,5 +32,10 @@ export default async function DashboardPaymentsPage() {
     createdAt: receipt.createdAt.toISOString(),
   }))
 
-  return <PaymentTab receitps={serializedReceipts} />
+  return (
+    <PaymentTab
+      receitps={serializedReceipts}
+      emailVerified={!!user?.emailVerified} // Convert to boolean (null -> false)
+    />
+  )
 }
