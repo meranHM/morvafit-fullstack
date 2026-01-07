@@ -4,7 +4,9 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import HealthProfileTab from "@/components/dashboard/HealthProfileTab"
 import { HealthData } from "@/types/bodyInfo"
+import { RawBodyInfoData } from "@/components/dashboard/DashboardBodyInfoForm"
 
+// Raw body info data from database (includes all fields needed for editing)
 type BodyInfoData = {
   age: number
   gender: string
@@ -19,7 +21,11 @@ type BodyInfoData = {
   preferredTime: string
   sessionDuration: string
   dietaryPreference: string
+  allergies: string | null
   medicalConditions: string | null
+  injuries: string | null
+  motivation: string | null
+  challenges: string | null
   updatedAt: Date
 }
 
@@ -31,6 +37,7 @@ export default async function DashboardHealthProfilePage() {
   }
 
   // Fetching user data from database
+  // Including all body info fields needed for both display and editing
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -38,7 +45,6 @@ export default async function DashboardHealthProfilePage() {
       email: true,
       phone: true,
       createdAt: true,
-      // Including body info if it exists (one-to-one relationship)
       bodyInfo: {
         select: {
           age: true,
@@ -54,7 +60,11 @@ export default async function DashboardHealthProfilePage() {
           preferredTime: true,
           sessionDuration: true,
           dietaryPreference: true,
+          allergies: true,
           medicalConditions: true,
+          injuries: true,
+          motivation: true,
+          challenges: true,
           updatedAt: true,
         },
       },
@@ -66,7 +76,8 @@ export default async function DashboardHealthProfilePage() {
   }
 
   // Preparing body info data (if it exists)
-  const bodyInfo = user.bodyInfo
+  // This includes all fields from the database for both display and editing
+  const bodyInfo: BodyInfoData | null = user.bodyInfo
     ? {
         age: user.bodyInfo.age,
         gender: user.bodyInfo.gender,
@@ -81,12 +92,42 @@ export default async function DashboardHealthProfilePage() {
         preferredTime: user.bodyInfo.preferredTime,
         sessionDuration: user.bodyInfo.sessionDuration,
         dietaryPreference: user.bodyInfo.dietaryPreference,
+        allergies: user.bodyInfo.allergies,
         medicalConditions: user.bodyInfo.medicalConditions,
+        injuries: user.bodyInfo.injuries,
+        motivation: user.bodyInfo.motivation,
+        challenges: user.bodyInfo.challenges,
         updatedAt: user.bodyInfo.updatedAt,
       }
     : null
 
-  // HELPER FUNCTION: Format enum values for display
+  // PREPARE RAW DATA FOR EDITING
+  // This data structure matches what DashboardBodyInfoForm expects
+  const rawBodyInfo: RawBodyInfoData | null = bodyInfo
+    ? {
+        age: bodyInfo.age,
+        gender: bodyInfo.gender,
+        height: bodyInfo.height,
+        weight: bodyInfo.weight,
+        targetWeight: bodyInfo.targetWeight,
+        primaryGoal: bodyInfo.primaryGoal,
+        activityLevel: bodyInfo.activityLevel,
+        experienceLevel: bodyInfo.experienceLevel,
+        workoutDays: bodyInfo.workoutDays,
+        preferredTime: bodyInfo.preferredTime,
+        sessionDuration: bodyInfo.sessionDuration,
+        dietaryPreference: bodyInfo.dietaryPreference,
+        allergies: bodyInfo.allergies,
+        medicalConditions: bodyInfo.medicalConditions,
+        injuries: bodyInfo.injuries,
+        motivation: bodyInfo.motivation,
+        challenges: bodyInfo.challenges,
+      }
+    : null
+
+  // HELPER FUNCTIONS
+  // =================================
+  // Formatting enum values for display
   // Converts "WEIGHT_LOSS" -> "Weight Loss"
   function formatEnumValue(value: string): string {
     return value
@@ -95,11 +136,11 @@ export default async function DashboardHealthProfilePage() {
       .join(" ")
   }
 
-  // HELPER FUNCTION: Format Body Info for Display
+  // Formatting Body Info for Display
   function formatBodyInfo(bodyInfo: BodyInfoData | null): HealthData | null {
     if (!bodyInfo) return null
 
-    // Format workout days: ["MON", "WED", "FRI"] -> "3 days/week"
+    // Formatting workout days: ["MON", "WED", "FRI"] -> "3 days/week"
     const workoutFrequency = `${bodyInfo.workoutDays.length} days/week`
 
     return {
@@ -121,5 +162,14 @@ export default async function DashboardHealthProfilePage() {
 
   const healthData = formatBodyInfo(bodyInfo)
 
-  return <HealthProfileTab healthData={healthData} />
+  // Passing both formatted display data and raw data for editing
+  return (
+    <HealthProfileTab
+      healthData={healthData}
+      rawBodyInfo={rawBodyInfo}
+      userName={user.name || ""}
+      userEmail={user.email || ""}
+      userPhone={user.phone || ""}
+    />
+  )
 }

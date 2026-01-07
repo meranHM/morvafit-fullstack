@@ -87,7 +87,7 @@ const BodyMetricsStep: React.FC<BodyMetricsStepProps> = ({
 
       {bmi && (
         <div className="p-6 rounded-lg" style={{ background: "oklch(0.3257 0.0203 269.5)" }}>
-          <h4 className="text-lg font-semibold mb-2" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
+          <h4 className="text-lg font-semibold mb-2 text-background">
             {t("form.bmiTitle") || "Your BMI Analysis"}
           </h4>
           <div className="flex items-center justify-between">
@@ -99,7 +99,7 @@ const BodyMetricsStep: React.FC<BodyMetricsStepProps> = ({
                 {bmiCategory?.text || ""}
               </p>
             </div>
-            <div className="text-right opacity-80" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
+            <div className="text-right opacity-80 text-background">
               <p className="text-sm">{t("form.weightToLose") || "Weight to lose"}:</p>
               <p className="text-lg font-semibold">
                 {(parseFloat(weight) - parseFloat(targetWeight)).toFixed(1)} kg

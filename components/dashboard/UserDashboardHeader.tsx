@@ -1,6 +1,17 @@
+"use client"
+
 import Image from "next/image"
 import { Link } from "@/i18n/navigation"
-import { Bell } from "lucide-react"
+import { Bell, LogOut, User, Settings } from "lucide-react"
+import { signOut } from "next-auth/react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface DashboardHeaderProps {
   name: string
@@ -22,21 +33,46 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name = "User", plan }
             />
           </Link>
           <div className="flex items-center gap-3">
+            {/* Notification bell */}
             <button className="p-2 rounded-xl border border-gray-200 hover:border-rose-300 hover:bg-rose-50 transition-all duration-300">
               <Bell size={20} className="text-gray-600" />
             </button>
-            <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-900">{name}</p>
-                <p className="text-xs text-gray-500">{plan} Plan</p>
-              </div>
-              <div className="relative group cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-                  {name.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-              </div>
-            </div>
+
+            {/* User profile dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 pl-3 border-l border-gray-200 outline-none">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-medium text-gray-900">{name}</p>
+                    <p className="text-xs text-gray-500">{plan} Plan</p>
+                  </div>
+                  <div className="relative group cursor-pointer">
+                    {/* Avatar with gradient background */}
+                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white font-semibold transition-transform duration-300 hover:scale-105">
+                      {name.slice(0, 2).toUpperCase()}
+                    </div>
+                    {/* Online status indicator */}
+                    <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{plan} Plan</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

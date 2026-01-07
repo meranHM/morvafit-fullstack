@@ -20,13 +20,12 @@ import {
   DietaryPreference,
 } from "@prisma/client"
 
-// ============================================
 // ENUM MAPPING HELPERS
 // ============================================
 // These functions convert form values to database enum values
 // Form uses user-friendly strings, database uses SCREAMING_CASE enums
 
-// Maps gender from form ("male", "female") to database enum
+// Mapping gender from form ("male", "female") to database enum
 function mapGender(value: string): Gender {
   const mapping: Record<string, Gender> = {
     male: Gender.MALE,
@@ -35,7 +34,7 @@ function mapGender(value: string): Gender {
   return mapping[value.toLowerCase()] || Gender.MALE
 }
 
-// Maps primary goal from form ("Weight Loss") to database enum
+// Mapping primary goal from form ("Weight Loss") to database enum
 function mapPrimaryGoal(value: string): PrimaryGoal {
   const mapping: Record<string, PrimaryGoal> = {
     "weight loss": PrimaryGoal.WEIGHT_LOSS,
@@ -48,7 +47,7 @@ function mapPrimaryGoal(value: string): PrimaryGoal {
   return mapping[value.toLowerCase()] || PrimaryGoal.GENERAL_FITNESS
 }
 
-// Maps activity level from form ("sedentary") to database enum
+// Mapping activity level from form ("sedentary") to database enum
 function mapActivityLevel(value: string): ActivityLevel {
   const mapping: Record<string, ActivityLevel> = {
     sedentary: ActivityLevel.SEDENTARY,
@@ -60,7 +59,7 @@ function mapActivityLevel(value: string): ActivityLevel {
   return mapping[value.toLowerCase()] || ActivityLevel.MODERATE
 }
 
-// Maps experience level from form ("Beginner") to database enum
+// Mapping experience level from form ("Beginner") to database enum
 function mapExperienceLevel(value: string): ExperienceLevel {
   const mapping: Record<string, ExperienceLevel> = {
     beginner: ExperienceLevel.BEGINNER,
@@ -70,7 +69,7 @@ function mapExperienceLevel(value: string): ExperienceLevel {
   return mapping[value.toLowerCase()] || ExperienceLevel.BEGINNER
 }
 
-// Maps workout days from form (["Mon", "Tue"]) to database enums
+// Mapping workout days from form (["Mon", "Tue"]) to database enums
 function mapWorkoutDays(days: string[]): WorkoutDays[] {
   const mapping: Record<string, WorkoutDays> = {
     mon: WorkoutDays.MON,
@@ -84,9 +83,9 @@ function mapWorkoutDays(days: string[]): WorkoutDays[] {
   return days.map(day => mapping[day.toLowerCase()] || WorkoutDays.MON)
 }
 
-// Maps preferred time from form ("Morning (6-11am)") to database enum
+// Mapping preferred time from form ("Morning (6-11am)") to database enum
 function mapPreferredTime(value: string): PreferredTime {
-  // Extract the time of day from strings like "Morning (6-11am)"
+  // Extracting the time of day from strings like "Morning (6-11am)"
   const timeOfDay = value.toLowerCase().split(" ")[0]
   const mapping: Record<string, PreferredTime> = {
     morning: PreferredTime.MORNING,
@@ -96,7 +95,7 @@ function mapPreferredTime(value: string): PreferredTime {
   return mapping[timeOfDay] || PreferredTime.MORNING
 }
 
-// Maps session duration from form ("30 min") to database enum
+// Mapping session duration from form ("30 min") to database enum
 function mapSessionDuration(value: string): SessionDurations {
   const mapping: Record<string, SessionDurations> = {
     "30 min": SessionDurations.MIN_30,
@@ -107,7 +106,7 @@ function mapSessionDuration(value: string): SessionDurations {
   return mapping[value] || SessionDurations.MIN_45
 }
 
-// Maps dietary preference from form ("No Restrictions") to database enum
+// Mapping dietary preference from form ("No Restrictions") to database enum
 function mapDietaryPreference(value: string): DietaryPreference {
   const mapping: Record<string, DietaryPreference> = {
     "no restrictions": DietaryPreference.NO_RESTRICTIONS,
@@ -120,42 +119,28 @@ function mapDietaryPreference(value: string): DietaryPreference {
   return mapping[value.toLowerCase()] || DietaryPreference.NO_RESTRICTIONS
 }
 
-// ============================================
 // HELPER FUNCTION: Calculating BMI
 // ============================================
 // BMI Formula: weight (kg) / (height (m))²
 // Example: 70kg / (1.75m)² = 22.86
 function calculateBMI(weight: number, height: number): number {
-  // Converting height from centimeters to meters
   const heightInMeters = height / 100
 
-  // Calculating BMI
   const bmi = weight / (heightInMeters * heightInMeters)
 
-  // Rounding to 2 decimal places
   return Math.round(bmi * 100) / 100
 }
 
-// ============================================
 // GET HANDLER - Fetching User's Body Info
 // ============================================
 export async function GET() {
   try {
-    // ============================================
-    // STEP 1: Checking authentication
-    // ============================================
-    // Get the current user's session
     const session = await getServerSession(authOptions)
 
-    // If user is not logged in, return 401 Unauthorized
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized - Please log in" }, { status: 401 })
     }
 
-    // ============================================
-    // STEP 2: Fetching body info from database
-    // ============================================
-    // Finding the body info for this specific user
     const bodyInfo = await prisma.bodyInfo.findUnique({
       where: {
         userId: session.user.id,
@@ -186,10 +171,6 @@ export async function GET() {
       },
     })
 
-    // ============================================
-    // STEP 3: Returning response
-    // ============================================
-    // If no body info exists yet, we return null
     if (!bodyInfo) {
       return NextResponse.json({
         success: true,
@@ -198,15 +179,11 @@ export async function GET() {
       })
     }
 
-    // Returning the body info
     return NextResponse.json({
       success: true,
       data: bodyInfo,
     })
   } catch (error) {
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
     console.error("GET Body Info error:", error)
 
     return NextResponse.json(
@@ -220,23 +197,15 @@ export async function GET() {
   }
 }
 
-// ============================================
 // POST HANDLER - Creating or Updating Body Info
 // ============================================
 export async function POST(request: Request) {
   try {
-    // ============================================
-    // STEP 1: Checking authentication
-    // ============================================
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized - Please log in" }, { status: 401 })
     }
-
-    // ============================================
-    // STEP 2: Getting data from request body
-    // ============================================
     const body = await request.json()
 
     // Destructuring all fields from the form
@@ -260,10 +229,7 @@ export async function POST(request: Request) {
       challenges,
     } = body
 
-    // ============================================
-    // STEP 3: Validating required fields
-    // ============================================
-    // List of required fields - these must all have values
+    // Validating required fields
     const requiredFields = [
       "age",
       "gender",
@@ -280,11 +246,11 @@ export async function POST(request: Request) {
       "motivation",
     ]
 
-    // Check each required field
+    // Checking each required field
     const missingFields: string[] = []
     for (const field of requiredFields) {
       const value = body[field]
-      // workoutDays is an array, so check length
+      // workoutDays is an array, so we check length
       if (field === "workoutDays") {
         if (!Array.isArray(value) || value.length === 0) {
           missingFields.push(field)
@@ -304,21 +270,17 @@ export async function POST(request: Request) {
       )
     }
 
-    // ============================================
-    // STEP 4: Validating data types and ranges
-    // ============================================
-    // Convert string values to numbers
+    // Validating data types and ranges
+    // Converting string values to numbers
     const ageNum = parseInt(age, 10)
     const heightNum = parseFloat(height)
     const weightNum = parseFloat(weight)
     const targetWeightNum = parseFloat(targetWeight)
 
-    // Age should be between 13 and 100
     if (isNaN(ageNum) || ageNum < 13 || ageNum > 100) {
       return NextResponse.json({ error: "Age must be between 13 and 100" }, { status: 400 })
     }
 
-    // Height should be between 100cm and 250cm
     if (isNaN(heightNum) || heightNum < 100 || heightNum > 250) {
       return NextResponse.json(
         { error: "Height must be a number between 100 and 250 cm" },
@@ -326,7 +288,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Weight should be between 30kg and 300kg
     if (isNaN(weightNum) || weightNum < 30 || weightNum > 300) {
       return NextResponse.json(
         { error: "Weight must be a number between 30 and 300 kg" },
@@ -334,7 +295,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Target weight should be between 30kg and 300kg
     if (isNaN(targetWeightNum) || targetWeightNum < 30 || targetWeightNum > 300) {
       return NextResponse.json(
         { error: "Target weight must be a number between 30 and 300 kg" },
@@ -342,10 +302,9 @@ export async function POST(request: Request) {
       )
     }
 
+    // Mapping form values to database enums
     // ============================================
-    // STEP 5: Mapping form values to database enums
-    // ============================================
-    // Convert user-friendly form values to database enum values
+    // Converting user-friendly form values to database enum values
     const mappedData = {
       age: ageNum,
       gender: mapGender(gender),
@@ -359,7 +318,7 @@ export async function POST(request: Request) {
       preferredTime: mapPreferredTime(preferredTime),
       sessionDuration: mapSessionDuration(sessionDuration),
       dietaryPreference: mapDietaryPreference(dietaryPreference),
-      // Optional string fields - use null if empty
+      // Optional string fields - we use null if empty
       allergies: allergies?.trim() || null,
       medicalConditions: medicalConditions?.trim() || null,
       injuries: injuries?.trim() || null,
@@ -367,13 +326,9 @@ export async function POST(request: Request) {
       challenges: challenges?.trim() || null,
     }
 
-    // ============================================
-    // STEP 6: Calculating BMI
-    // ============================================
     const bmi = calculateBMI(weightNum, heightNum)
 
-    // ============================================
-    // STEP 7: Creating or updating body info in database
+    // Creating or updating body info in database
     // ============================================
     // Using upsert: if body info exists, update it; otherwise, create a new one
     const bodyInfo = await prisma.bodyInfo.upsert({
@@ -395,9 +350,6 @@ export async function POST(request: Request) {
       },
     })
 
-    // ============================================
-    // STEP 8: Returning success response
-    // ============================================
     return NextResponse.json(
       {
         success: true,
@@ -423,9 +375,6 @@ export async function POST(request: Request) {
       { status: 200 }
     )
   } catch (error) {
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
     console.error("POST Body Info error:", error)
 
     return NextResponse.json(
@@ -438,38 +387,3 @@ export async function POST(request: Request) {
     )
   }
 }
-
-// ============================================
-// HOW TO USE THESE ENDPOINTS
-// ============================================
-//
-// GET - Fetch body info:
-// GET /api/user/body-info
-// Headers: Cookie with session token (automatic from NextAuth)
-// Response: { success: true, data: { age, gender, height, weight, bmi, ... } }
-//
-// POST - Create/Update body info:
-// POST /api/user/body-info
-// Headers: Cookie with session token (automatic from NextAuth)
-// Body: {
-//   "age": "25",                        // required
-//   "gender": "male",                   // required
-//   "height": "175",                    // in cm (required)
-//   "weight": "70",                     // in kg (required)
-//   "targetWeight": "65",               // in kg (required)
-//   "primaryGoal": "Weight Loss",       // required
-//   "activityLevel": "moderate",        // required
-//   "experienceLevel": "Beginner",      // required
-//   "workoutDays": ["Mon", "Wed", "Fri"], // required, at least one
-//   "preferredTime": "Morning (6-11am)", // required
-//   "sessionDuration": "45 min",        // required
-//   "dietaryPreference": "No Restrictions", // required
-//   "motivation": "Get healthier",      // required
-//   "allergies": "None",                // optional
-//   "medicalConditions": "",            // optional
-//   "injuries": "",                     // optional
-//   "challenges": ""                    // optional
-// }
-// Response: { success: true, message: "Body info saved!", data: {...} }
-//
-// ============================================

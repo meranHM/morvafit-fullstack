@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { navigation } from "@/data/statics/admin-panel"
 import { useState, useEffect } from "react"
 import { X, Users, Bell, LogOut, ChevronDown } from "lucide-react"
+import { signOut } from "next-auth/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -96,10 +97,13 @@ const AdminPanelSidebar = () => {
                   Notifications
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
+                <DropdownMenuItem
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

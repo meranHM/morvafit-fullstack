@@ -73,9 +73,9 @@ const VerifyEmail = () => {
         {/* Logo */}
         <Link href="/" className="inline-block mb-8">
           <Image
-            className="object-contain h-12 w-auto mx-auto"
-            width={150}
-            height={48}
+            className="object-contain h-40 w-auto mx-auto"
+            width={250}
+            height={120}
             src="/morvafit-logo-black.svg"
             alt="Morvafit Logo"
           />

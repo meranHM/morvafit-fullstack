@@ -2,6 +2,7 @@
 
 import { Video, Receipt, Check, Play, Clock, Target } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Link from "next/link"
 
 // Type for video data passed from the server
 interface VideoType {
@@ -29,7 +30,13 @@ interface OverviewTabProps {
   stats: StatsType
 }
 
-const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment, newWorkoutsCount, stats }) => {
+const OverviewTab: React.FC<OverviewTabProps> = ({
+  videos,
+  name,
+  nextPayment,
+  newWorkoutsCount,
+  stats,
+}) => {
   // Build the stats array with real data from props
   const statsDisplay = [
     {
@@ -101,7 +108,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment, ne
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
+            <div className="w-full bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
                   <Video className="text-rose-600" size={20} />
@@ -115,12 +122,13 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ videos, name, nextPayment, ne
                   </p>
                 </div>
               </div>
-              <button
-                // onClick={() => setActiveTab("videos")}
+
+              <Link
+                href="/dashboard/workouts"
                 className="w-full py-3 rounded-xl bg-linear-to-r from-rose-500 to-pink-500 text-white font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
               >
                 View Workouts
-              </button>
+              </Link>
             </div>
 
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200 p-6">

@@ -60,11 +60,14 @@ const FinalDetailsStep: React.FC<FinalDetailsStepProps> = ({
         />
       </div>
 
-      <div className="mt-8 p-6 rounded-lg" style={{ background: "oklch(0.3257 0.0203 269.5)" }}>
-        <h4 className="text-lg font-semibold mb-3" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
+      <div
+        className="mt-8 p-6 rounded-lg text-background"
+        style={{ background: "oklch(0.3257 0.0203 269.5)" }}
+      >
+        <h4 className="text-lg font-semibold mb-3">
           📋 {t("form.assessmentSummery.title") || "Assessment Summary"}
         </h4>
-        <div className="space-y-2 text-sm" style={{ color: "oklch(0.9465 0.013 17.39)" }}>
+        <div className="space-y-2 text-sm">
           <p>
             <strong>{t("form.assessmentSummery.goal") || "Goal"}:</strong>{" "}
             {primaryGoal || "Not set"}

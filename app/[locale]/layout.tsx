@@ -5,6 +5,7 @@ import { locales, localeDirections } from "@/i18n/config"
 import { routing } from "@/i18n/routing"
 import { notFound } from "next/navigation"
 import LenisProvider from "@/components/providers/LenisProvider"
+import AuthProvider from "@/components/providers/AuthProvider"
 import "@/styles/globals.css"
 
 const montserrat = Montserrat({
@@ -66,9 +67,11 @@ export default async function LocaleLayout({
       className={locale === "fa" ? vazirmatn.className : montserrat.className}
     >
       <body>
-        <LenisProvider>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
-        </LenisProvider>
+        <AuthProvider>
+          <LenisProvider>
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          </LenisProvider>
+        </AuthProvider>
       </body>
     </html>
   )

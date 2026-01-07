@@ -15,23 +15,35 @@ import { prisma } from "@/lib/prisma"
 
 // Allowed levels and categories (matching Prisma schema)
 const ALLOWED_LEVELS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"]
-const ALLOWED_CATEGORIES = ["STRENGTH", "CARDIO", "FLEXIBILITY", "HIIT", "CORE", "FULL_BODY"]
+const ALLOWED_CATEGORIES = [
+  "UPPER_BODY",
+  "LEGS",
+  "GLUTES",
+  "CORE",
+  "ABS",
+  "CARDIO",
+  "CARDIO_BOXING",
+  "FULL_BODY",
+  "FULL_BODY_SCULPT",
+  "HIIT",
+  "PILATES",
+  "ABS_CARDIO",
+  "BODYWEIGHT_TRAINING",
+  "TRX",
+  "FUNCTIONAL_TRAINING",
+]
 
 export async function POST(request: NextRequest) {
   try {
-    // STEP 1: Check authentication
-    // Only logged-in admins can confirm video uploads
     const session = await getServerSession(authOptions)
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Check if user is admin
     if (session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 })
     }
 
-    // STEP 2: Parse and validate request body
     const body = await request.json()
     const {
       videoUrl,
@@ -46,7 +58,6 @@ export async function POST(request: NextRequest) {
       tagIds,
     } = body
 
-    // STEP 3: Validate required fields
     if (!videoUrl) {
       return NextResponse.json({ error: "videoUrl is required" }, { status: 400 })
     }
@@ -69,8 +80,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // STEP 4: Validate optional fields
-    // Duration should be a positive number (in seconds)
     let parsedDuration: number | null = null
     if (duration !== undefined && duration !== null && duration !== "") {
       parsedDuration = parseInt(duration, 10)
@@ -82,7 +91,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // BMI values should be between 10 and 60
     let parsedBmiMin: number | null = null
     let parsedBmiMax: number | null = null
 
@@ -106,7 +114,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // If both are set, min should be less than max
     if (parsedBmiMin !== null && parsedBmiMax !== null && parsedBmiMin > parsedBmiMax) {
       return NextResponse.json(
         { error: "targetBmiMin must be less than targetBmiMax" },
@@ -114,7 +121,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // STEP 5: Validate tagIds if provided
     // tagIds should be an array of valid tag IDs
     let validTagIds: string[] = []
     if (tagIds && Array.isArray(tagIds) && tagIds.length > 0) {
@@ -126,7 +132,6 @@ export async function POST(request: NextRequest) {
       validTagIds = existingTags.map(t => t.id)
     }
 
-    // STEP 6: Create the video record in database
     const video = await prisma.video.create({
       data: {
         title: title.trim(),
@@ -138,7 +143,6 @@ export async function POST(request: NextRequest) {
         category,
         targetBmiMin: parsedBmiMin,
         targetBmiMax: parsedBmiMax,
-        // Create tag associations if any tags provided
         tags:
           validTagIds.length > 0
             ? {
@@ -148,7 +152,6 @@ export async function POST(request: NextRequest) {
               }
             : undefined,
       },
-      // Include tags in response
       include: {
         tags: {
           include: {
@@ -158,7 +161,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // STEP 7: Format and return the created video
     return NextResponse.json({
       video: {
         id: video.id,

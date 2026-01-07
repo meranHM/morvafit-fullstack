@@ -160,3 +160,75 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #e11d48, #db2777);
 }
+
+/* ============================================
+   DASHBOARD BODY INFO FORM STYLES
+   ============================================
+   Override dark theme styles for form steps when used in dashboard
+   The .dashboard-form-step class wraps the step components
+*/
+.dashboard-form-step label {
+  color: #374151 !important; /* gray-700 */
+}
+
+.dashboard-form-step input,
+.dashboard-form-step select,
+.dashboard-form-step textarea {
+  background-color: #f9fafb !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+.dashboard-form-step input::placeholder,
+.dashboard-form-step textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.dashboard-form-step input:focus,
+.dashboard-form-step select:focus,
+.dashboard-form-step textarea:focus {
+  border-color: #f43f5e !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+}
+
+.dashboard-form-step select option {
+  background-color: white !important;
+  color: #111827 !important;
+}
+
+/* Goal cards and option buttons in dashboard form */
+.dashboard-form-step button[class*="border-white"] {
+  border-color: #e5e7eb !important;
+  background-color: #f9fafb !important;
+}
+
+.dashboard-form-step button[class*="border-white"]:hover {
+  border-color: #f43f5e !important;
+  background-color: #fff1f2 !important;
+}
+
+/* Selected state for option buttons */
+.dashboard-form-step button[class*="bg-white\\/20"] {
+  background-color: #fff1f2 !important;
+  border-color: #f43f5e !important;
+}
+
+/* Text colors in step components */
+.dashboard-form-step [style*="oklch(0.9465"] {
+  color: #374151 !important;
+}
+
+.dashboard-form-step .text-white {
+  color: #111827 !important;
+}
+
+.dashboard-form-step .text-white\\70,
+.dashboard-form-step .text-white\\80 {
+  color: #6b7280 !important;
+}
+
+/* Error text should stay red */
+.dashboard-form-step .text-red-400 {
+  color: #f87171 !important;
+}

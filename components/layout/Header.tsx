@@ -2,11 +2,19 @@
 
 import Image from "next/image"
 import { Link } from "@/i18n/navigation"
-import { ShoppingBag, User2Icon, Menu, X } from "lucide-react"
+import { User2Icon, Menu, X, LogOut, Sparkles } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { routing } from "@/i18n/routing"
+import { useSession, signOut } from "next-auth/react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 type AppPathnames = keyof typeof routing.pathnames
 
@@ -18,6 +26,7 @@ type NavLink = {
 
 const Header = () => {
   const t = useTranslations("Navbar")
+  const { data: session, status } = useSession()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeLink, setActiveLink] = useState("")
@@ -64,6 +73,13 @@ const Header = () => {
   ]
 
   const logoSrc = isScrolled ? "/morvafit-logo-black.svg" : "/morvafit-logo-white.svg"
+
+  // Getting user initials for the avatar
+  const getUserInitials = () => {
+    if (!session?.user?.name) return "U"
+    return session.user.name.slice(0, 2).toUpperCase()
+  }
+
   return (
     <>
       <motion.header
@@ -141,30 +157,69 @@ const Header = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <Link
-                  href="/dashboard"
-                  className={`relative p-2.5 rounded-xl transition-all duration-300 hover:text-rose-600 group overflow-hidden ${
-                    isScrolled ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  <User2Icon size={24} className="relative z-10" />
-                </Link>
-              </motion.div>
+                {/* Show different UI based on auth status */}
+                {status === "loading" ? (
+                  // Loading skeleton
+                  <div className="w-10 h-10 rounded-full bg-gray-300/30 animate-pulse" />
+                ) : session ? (
+                  // Logged in
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="relative group outline-none">
+                        {/* Animated glow ring */}
+                        <div className="absolute -inset-1 bg-linear-to-r from-rose-500 via-pink-500 to-rose-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
 
-              {/* <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
-                <Link
-                  href="/shop"
-                  className={`relative p-2.5 rounded-xl transition-all duration-300 hover:text-rose-600 group overflow-hidden ${
-                    isScrolled ? "text-gray-800" : "text-white"
-                  }`}
-                >
-                  <ShoppingBag size={24} className="relative z-10" />
-                </Link>
-              </motion.div> */}
+                        {/* Avatar container */}
+                        <div className="relative w-10 h-10 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white font-semibold shadow-lg transition-transform duration-300 group-hover:scale-110">
+                          {getUserInitials()}
+                        </div>
+
+                        {/* Sparkle indicator */}
+                        <motion.div
+                          className="absolute -top-1 -right-1"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Sparkles size={14} className="text-yellow-400 drop-shadow-lg" />
+                        </motion.div>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <div className="px-3 py-2">
+                        <p className="text-sm font-medium">{session.user?.name || "User"}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {session.user?.email}
+                        </p>
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href="/dashboard" className="flex items-center">
+                          <User2Icon className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  // Not logged in - Show regular profile link
+                  <Link
+                    href="/dashboard"
+                    className={`relative p-2.5 rounded-xl transition-all duration-300 hover:text-rose-600 group overflow-hidden ${
+                      isScrolled ? "text-gray-700" : "text-white"
+                    }`}
+                  >
+                    <User2Icon size={24} className="relative z-10" />
+                  </Link>
+                )}
+              </motion.div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -269,35 +324,77 @@ const Header = () => {
 
                 {/* Action Buttons */}
                 <div className="p-6 border-t border-gray-100 space-y-3">
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.5 }}
-                  >
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
-                    >
-                      <User2Icon size={20} />
-                      <span>Profile</span>
-                    </Link>
-                  </motion.div>
+                  {session ? (
+                    // Logged in state for mobile
+                    <>
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.5 }}
+                      >
+                        {/* User info card */}
+                        <div className="flex items-center gap-3 p-3 bg-linear-to-r from-rose-50 to-pink-50 rounded-xl mb-3">
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-r from-rose-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+                              {getUserInitials()}
+                            </div>
+                            <Sparkles
+                              size={12}
+                              className="absolute -top-1 -right-1 text-yellow-400"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {session.user?.name || "User"}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">{session.user?.email}</p>
+                          </div>
+                        </div>
 
-                  {/* <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.6 }}
-                  >
-                    <Link
-                      href="/shop"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl bg-linear-to-r from-rose-500 to-pink-500 text-white font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-rose-500/25"
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
+                        >
+                          <User2Icon size={20} />
+                          <span>Dashboard</span>
+                        </Link>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.6 }}
+                      >
+                        <button
+                          onClick={() => {
+                            setMobileMenuOpen(false)
+                            signOut({ callbackUrl: "/" })
+                          }}
+                          className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl border border-red-200 text-red-600 font-medium hover:bg-red-50 transition-all duration-300"
+                        >
+                          <LogOut size={20} />
+                          <span>Log out</span>
+                        </button>
+                      </motion.div>
+                    </>
+                  ) : (
+                    // Not logged in state for mobile
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.5 }}
                     >
-                      <ShoppingBag size={20} />
-                      <span>Shop</span>
-                    </Link>
-                  </motion.div> */}
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
+                      >
+                        <User2Icon size={20} />
+                        <span>Profile</span>
+                      </Link>
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </motion.div>

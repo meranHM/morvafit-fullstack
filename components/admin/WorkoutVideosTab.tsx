@@ -52,15 +52,13 @@ const WorkoutVideosTab = ({ videos, tags }: WorkoutVideosTabProps) => {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null)
   const [selectedVideoTitle, setSelectedVideoTitle] = useState<string>("")
 
-  // Filter states
+  // Filtering states
   const [selectedTagFilter, setSelectedTagFilter] = useState<string>("all")
   const [selectedLevelFilter, setSelectedLevelFilter] = useState<string>("all")
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all")
 
-  // Delete loading state
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // Handle opening assign dialog for a specific video
   const handleAssignClick = (videoId: string) => {
     setSelectedVideoId(videoId)
     setAssignDialogOpen(true)
@@ -100,7 +98,7 @@ const WorkoutVideosTab = ({ videos, tags }: WorkoutVideosTabProps) => {
     }
   }
 
-  // Filter videos based on selected filters
+  // Filtering videos based on selected filters
   const filteredVideos = videos.filter(video => {
     // Tag filter
     if (selectedTagFilter !== "all") {
@@ -123,7 +121,23 @@ const WorkoutVideosTab = ({ videos, tags }: WorkoutVideosTabProps) => {
 
   // Get unique levels and categories for filter dropdowns
   const levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED"]
-  const categories = ["STRENGTH", "CARDIO", "FLEXIBILITY", "HIIT", "CORE", "FULL_BODY"]
+  const categories = [
+    "UPPER_BODY",
+    "LEGS",
+    "GLUTES",
+    "CORE",
+    "ABS",
+    "CARDIO",
+    "CARDIO_BOXING",
+    "FULL_BODY",
+    "FULL_BODY_SCULPT",
+    "HIIT",
+    "PILATES",
+    "ABS_CARDIO",
+    "BODYWEIGHT_TRAINING",
+    "TRX",
+    "FUNCTIONAL_TRAINING",
+  ]
 
   return (
     <div className="space-y-6">
@@ -158,10 +172,7 @@ const WorkoutVideosTab = ({ videos, tags }: WorkoutVideosTabProps) => {
               <SelectItem key={tag.id} value={tag.id}>
                 <div className="flex items-center gap-2">
                   {tag.color && (
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: tag.color }}
-                    />
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tag.color }} />
                   )}
                   {tag.name}
                 </div>
@@ -252,104 +263,103 @@ const WorkoutVideosTab = ({ videos, tags }: WorkoutVideosTabProps) => {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVideos.map(video => (
-            <Card key={video.id}>
-              <CardHeader>
-                {/* Video thumbnail or placeholder */}
-                <div className="aspect-video bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                  {video.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={video.thumbnailUrl}
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Video className="text-gray-400" size={48} />
-                  )}
-                </div>
-                <CardTitle className="text-lg">{video.title}</CardTitle>
-                <CardDescription>
-                  {video.duration || "Unknown duration"} • {video.level} Level
-                </CardDescription>
-
-                {/* Category and assignment badges */}
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  <Badge variant="outline">{video.category.replace(/_/g, " ")}</Badge>
-                  <Badge variant="secondary">{video.assignedCount} assigned</Badge>
-                </div>
-
-                {/* Tags */}
-                {video.tags.length > 0 && (
-                  <div className="flex gap-1 mt-2 flex-wrap">
-                    {video.tags.map(tag => (
-                      <Badge
-                        key={tag.id}
-                        variant="outline"
-                        className="text-xs"
-                        style={{
-                          borderColor: tag.color || undefined,
-                          color: tag.color || undefined,
-                        }}
-                      >
-                        {tag.name}
-                      </Badge>
-                    ))}
+          {filteredVideos.map(video => {
+            console.log(video.thumbnailUrl)
+            return (
+              <Card key={video.id}>
+                <CardHeader>
+                  {/* Video thumbnail or placeholder */}
+                  <div className="aspect-video bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                    {video.thumbnailUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Video className="text-gray-400" size={48} />
+                    )}
                   </div>
-                )}
+                  <CardTitle className="text-lg">{video.title}</CardTitle>
+                  <CardDescription>
+                    {video.duration || "Unknown duration"} • {video.level} Level
+                  </CardDescription>
 
-                {/* BMI range if set */}
-                {(video.targetBmiMin || video.targetBmiMax) && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    BMI Range: {video.targetBmiMin || "any"} - {video.targetBmiMax || "any"}
-                  </p>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => window.open(video.videoUrl, "_blank")}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Preview
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <MoreVertical size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleAssignClick(video.id)}>
-                        <Users className="mr-2 h-4 w-4" />
-                        Assign to Client
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => handleDeleteClick(video.id, video.title)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  {/* Category and assignment badges */}
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    <Badge variant="outline">{video.category.replace(/_/g, " ")}</Badge>
+                    <Badge variant="secondary">{video.assignedCount} assigned</Badge>
+                  </div>
+
+                  {/* Tags */}
+                  {video.tags.length > 0 && (
+                    <div className="flex gap-1 mt-2 flex-wrap">
+                      {video.tags.map(tag => (
+                        <Badge
+                          key={tag.id}
+                          variant="outline"
+                          className="text-xs"
+                          style={{
+                            borderColor: tag.color || undefined,
+                            color: tag.color || undefined,
+                          }}
+                        >
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* BMI range if set */}
+                  {(video.targetBmiMin || video.targetBmiMax) && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      BMI Range: {video.targetBmiMin || "any"} - {video.targetBmiMax || "any"}
+                    </p>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => window.open(video.videoUrl, "_blank")}
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      Preview
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <MoreVertical size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleAssignClick(video.id)}>
+                          <Users className="mr-2 h-4 w-4" />
+                          Assign to Client
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleDeleteClick(video.id, video.title)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
 
       {/* Video Upload Dialog */}
-      <VideoUploadDialog
-        open={uploadDialogOpen}
-        onOpenChange={setUploadDialogOpen}
-        tags={tags}
-      />
+      <VideoUploadDialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen} tags={tags} />
 
       {/* Video Assign Dialog */}
       <VideoAssignDialog

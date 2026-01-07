@@ -24,21 +24,18 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
 import { Upload, X, Video, Image, Loader2, CheckCircle } from "lucide-react"
 
-// Tag type for the component
 type Tag = {
   id: string
   name: string
   color: string | null
 }
 
-// Props for the dialog
 type VideoUploadDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   tags: Tag[]
 }
 
-// Upload status for showing step-by-step progress
 type UploadStatus =
   | "idle"
   | "getting-urls"
@@ -50,7 +47,7 @@ type UploadStatus =
 export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUploadDialogProps) {
   const router = useRouter()
 
-  // Form state
+  // Form states
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [level, setLevel] = useState("")
@@ -60,48 +57,40 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
   const [targetBmiMax, setTargetBmiMax] = useState("")
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
 
-  // File state
+  // File states
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
 
-  // UI state
+  // UI states
   const [isUploading, setIsUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle")
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
-  // File input refs
   const videoInputRef = useRef<HTMLInputElement>(null)
   const thumbnailInputRef = useRef<HTMLInputElement>(null)
 
-  // Handle video file selection
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
       const allowedTypes = ["video/mp4", "video/webm", "video/quicktime"]
       if (!allowedTypes.includes(file.type)) {
         setError("Invalid video type. Allowed: MP4, WebM, MOV")
         return
       }
-      // No file size limit for presigned URL uploads!
-      // Large files (45min-1hr videos) are now supported
       setVideoFile(file)
       setError(null)
     }
   }
 
-  // Handle thumbnail file selection
   const handleThumbnailSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
       if (!allowedTypes.includes(file.type)) {
         setError("Invalid thumbnail type. Allowed: JPG, PNG, WebP")
         return
       }
-      // Validate file size (5MB for thumbnails)
       if (file.size > 5 * 1024 * 1024) {
         setError("Thumbnail too large. Maximum: 5MB")
         return
@@ -111,14 +100,12 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     }
   }
 
-  // Toggle tag selection
   const toggleTag = (tagId: string) => {
     setSelectedTagIds(prev =>
       prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
     )
   }
 
-  // Reset form
   const resetForm = () => {
     setTitle("")
     setDescription("")
@@ -135,7 +122,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     setError(null)
   }
 
-  // Get presigned URL from our API
+  // Getting presigned URL from our API
   const getPresignedUrl = async (
     fileName: string,
     contentType: string,
@@ -155,7 +142,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     return response.json()
   }
 
-  // Upload file directly to S3 with progress tracking
+  // Uploading file directly to S3 with progress tracking
   const uploadToS3WithProgress = (
     file: File,
     uploadUrl: string,
@@ -193,16 +180,15 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
       // Send the request
       xhr.open("PUT", uploadUrl)
       xhr.setRequestHeader("Content-Type", file.type)
+      xhr.setRequestHeader("x-amz-acl", "public-read")
       xhr.send(file)
     })
   }
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    // Validate required fields
     if (!videoFile) {
       setError("Please select a video file")
       return
@@ -224,18 +210,18 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     setUploadProgress(0)
 
     try {
-      // STEP 1: Get presigned URL for video
+      // Getting presigned URL for video
       setUploadStatus("getting-urls")
       const videoPresigned = await getPresignedUrl(videoFile.name, videoFile.type, "video")
 
-      // STEP 2: Upload video directly to S3
+      // Uploading video directly to S3
       setUploadStatus("uploading-video")
       await uploadToS3WithProgress(videoFile, videoPresigned.uploadUrl, percent => {
         // Video upload is 0-80% of total progress
         setUploadProgress(Math.round(percent * 0.8))
       })
 
-      // STEP 3: Upload thumbnail if provided
+      // Uploading thumbnail if provided
       let thumbnailPublicUrl: string | null = null
       if (thumbnailFile) {
         setUploadStatus("uploading-thumbnail")
@@ -253,7 +239,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
         setUploadProgress(90)
       }
 
-      // STEP 4: Save metadata to database
+      // Saving metadata to database
       setUploadStatus("saving")
       const confirmResponse = await fetch("/api/upload/confirm", {
         method: "POST",
@@ -280,7 +266,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
       setUploadProgress(100)
       setUploadStatus("complete")
 
-      // Success - close dialog and refresh after brief delay
+      // Success - closing dialog and refreshing after brief delay
       setTimeout(() => {
         resetForm()
         onOpenChange(false)
@@ -296,7 +282,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     }
   }
 
-  // Get status message for current upload step
+  // Getting status message for current upload step
   const getStatusMessage = () => {
     switch (uploadStatus) {
       case "getting-urls":
@@ -314,7 +300,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
     }
   }
 
-  // Format file size for display
+  // Formatting file size for display
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024 * 1024) {
       return `${(bytes / 1024).toFixed(0)} KB`
@@ -327,7 +313,7 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-lenis-prevent>
         <DialogHeader>
           <DialogTitle>Upload New Video</DialogTitle>
           <DialogDescription>
@@ -477,12 +463,21 @@ export default function VideoUploadDialog({ open, onOpenChange, tags }: VideoUpl
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="STRENGTH">Strength</SelectItem>
-                  <SelectItem value="CARDIO">Cardio</SelectItem>
-                  <SelectItem value="FLEXIBILITY">Flexibility</SelectItem>
-                  <SelectItem value="HIIT">HIIT</SelectItem>
+                  <SelectItem value="UPPER_BODY">Upper Body</SelectItem>
+                  <SelectItem value="LEGS">Legs</SelectItem>
+                  <SelectItem value="GLUTES">Glutes</SelectItem>
                   <SelectItem value="CORE">Core</SelectItem>
+                  <SelectItem value="ABS">Abs</SelectItem>
+                  <SelectItem value="CARDIO">Cardio</SelectItem>
+                  <SelectItem value="CARDIO_BOXING">Cardio Boxing</SelectItem>
                   <SelectItem value="FULL_BODY">Full Body</SelectItem>
+                  <SelectItem value="FULL_BODY_SCULPT">Full Body Sculpt</SelectItem>
+                  <SelectItem value="HIIT">HIIT</SelectItem>
+                  <SelectItem value="PILATES">Pilates</SelectItem>
+                  <SelectItem value="ABS_CARDIO">Abs Cardio</SelectItem>
+                  <SelectItem value="BODYWEIGHT_TRAINING">Bodyweight Training</SelectItem>
+                  <SelectItem value="TRX">TRX</SelectItem>
+                  <SelectItem value="FUNCTIONAL_TRAINING">Functional Training</SelectItem>
                 </SelectContent>
               </Select>
             </div>
